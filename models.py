@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, Boolean, create_engine
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
+from sqlalchemy.sql.sqltypes import ChoiceType
 
 db = create_engine("mysql+pymysql://root:123456@127.0.0.1:18087/pizzaria.db")
 
@@ -23,3 +24,23 @@ class User(Base):
         self.password = password
         self.active = active
         self.admin = admin
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    ORDER_STATUS = [
+        ("PENDING", "PENDING"),
+        ("IN_PROGRESS", "IN_PROGRESS"),
+        ("COMPLETED", "COMPLETED"),
+        ("CANCELLED", "CANCELLED"),
+    ]
+
+    id = Column("id", Integer, primary_key=True, autoincrement=True)
+    user_id = Column("user_id", ForeignKey("users.id"), nullable=False)
+    price = Column("price", Float, nullable=False)
+    status = Column("status", ChoiceType(ORDER_STATUS), nullable=False, default="PENDING")
+
+    def __init__(self, user_id: int, price: float, status: str = "PENDING") -> None:
+        self.user_id = user_id
+        self.price = price
+        self.status = status
