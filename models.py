@@ -44,3 +44,16 @@ class Order(Base):
         self.user_id = user_id
         self.price = price
         self.status = status
+
+class Product(Base):
+    __tablename__ = "products"
+
+    id = Column("id", Integer, primary_key=True, autoincrement=True)
+    name = Column("name", String(255), nullable=False)
+    price = Column("price", Float, nullable=False)
+    description = Column("description", String(255), nullable=False)
+
+    def __init__(self, name: str, price: float, description: str) -> None:
+        self.name = name
+        self.price = price
+        self.description = description
