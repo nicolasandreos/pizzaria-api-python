@@ -16,7 +16,7 @@ JWT_TOKEN = os.getenv("JWT_TOKEN")
 app = FastAPI()
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-form-docs")
 
 from routes.auth_router import auth_router
 from routes.order_router import order_router

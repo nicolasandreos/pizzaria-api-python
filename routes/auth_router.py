@@ -6,6 +6,7 @@ from schemas.user_schema import RequestCreateUserSchema, RequestLoginSchema
 from sqlalchemy.orm import Session
 from jose import jwt
 from datetime import datetime, timedelta, timezone
+from fastapi.security import OAuth2PasswordRequestForm
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -41,12 +42,7 @@ async def create_account(user_schema: RequestCreateUserSchema, session: Session 
 
 @auth_router.post("/login")
 async def login(login_schema: RequestLoginSchema, session: Session = Depends(get_session)):
-    user = session.query(User).filter(User.email == login_schema.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    if not bcrypt_context.verify(login_schema.password, user.password):
-        raise HTTPException(status_code=401, detail="Invalid password")
+    user = authenticate_user(login_schema.email, login_schema.password, session)
 
     access_token = create_token(user.id)
     refresh_token = create_token(user.id, timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES))
@@ -57,10 +53,31 @@ async def login(login_schema: RequestLoginSchema, session: Session = Depends(get
         "token_type": "Bearer"
     }
 
+
+@auth_router.post("/login-form-docs")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
+    user = authenticate_user(form_data.username, form_data.password, session)
+
+    access_token = create_token(user.id)
+    
+    return {
+        "access_token": access_token,
+        "token_type": "Bearer"
+    }
+
 @auth_router.get("/refresh-access-token")
-async def refresh_access_token(user: User = Depends(verify_token), session: Session = Depends(get_session)):
+async def refresh_access_token(user: User = Depends(verify_token)):
     access_token = create_token(user.id)
     return {
         "access_token": access_token,
         "token_type": "Bearer"
     }
+
+def authenticate_user(email: str, password: str, session: Session = Depends(get_session)):
+    user = session.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if not bcrypt_context.verify(password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid password")
+    return user
