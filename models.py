@@ -1,9 +1,14 @@
+import os
+
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, Boolean, create_engine
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
-from sqlalchemy.sql.sqltypes import ChoiceType
+from sqlalchemy_utils import ChoiceType
+from dotenv import load_dotenv
 
-db = create_engine("mysql+pymysql://root:123456@127.0.0.1:18087/pizzaria.db")
+load_dotenv()
+
+db = create_engine(os.getenv("DATABASE_URL"), echo=True)
 
 Base = declarative_base()
 
