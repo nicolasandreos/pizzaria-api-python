@@ -1,8 +1,8 @@
 """Create inicial database
 
-Revision ID: b5c637809c99
+Revision ID: d708c694eb79
 Revises: 
-Create Date: 2026-06-10 21:45:49.937031
+Create Date: 2026-06-10 22:04:25.924448
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b5c637809c99'
+revision: str = 'd708c694eb79'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,7 +26,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
     sa.Column('description', sa.String(length=255), nullable=False),
-    sa.Column('size', sqlalchemy_utils.types.choice.ChoiceType(length=255), nullable=False),
+    sa.Column('size', sa.Enum('SMALL', 'MEDIUM', 'LARGE', name='size'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -44,7 +44,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('status', sqlalchemy_utils.types.choice.ChoiceType(length=255), nullable=False),
+    sa.Column('status', sa.Enum('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', name='orderstatus'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
