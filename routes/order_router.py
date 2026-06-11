@@ -75,3 +75,14 @@ async def cancel_order(order_id: int, session: Session = Depends(get_session), u
         "order_status": order.status,
         "order_price": order.price,
     }
+
+@order_router.get("/all")
+async def get_all_orders(session: Session = Depends(get_session), user: User = Depends(verify_token)):
+    if user.admin == False:
+        raise HTTPException(status_code=403, detail="You are not authorized to get all orders")
+    orders = session.query(Order).all()
+    return {
+        "orders": orders
+    }
+
+    
