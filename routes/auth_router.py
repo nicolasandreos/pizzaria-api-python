@@ -3,20 +3,26 @@ import os
 from fastapi import APIRouter, Depends, HTTPException
 from models import User
 from dependencies import get_session
-from main import bcrypt_context
+from main import bcrypt_context, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, JWT_TOKEN, REFRESH_TOKEN_EXPIRE_MINUTES
 from schemas.user_schema import RequestCreateUserSchema, RequestLoginSchema
 from sqlalchemy.orm import Session
 from jose import jwt
+from datetime import datetime, timedelta, timezone
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
-def create_token(user_id: int):
-    access_token = jwt.encode(
-        {"sub": user_id},
-        os.getenv("JWT_TOKEN"),
-        algorithm="HS256"
+def create_token(user_id: int, token_duration: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+    expiration_date = datetime.now(timezone.utc) + token_duration
+    payload ={
+        "sub": user_id,
+        "exp": expiration_date
+    }
+    token = jwt.encode(
+        payload,
+        JWT_TOKEN,
+        algorithm=ALGORITHM
     )
-    return access_token
+    return token
     
 
 @auth_router.post("/register")
@@ -44,8 +50,10 @@ async def login(login_schema: RequestLoginSchema, session: Session = Depends(get
         raise HTTPException(status_code=401, detail="Invalid password")
 
     access_token = create_token(user.id)
+    refresh_token = create_token(user.id, timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES))
     
     return {
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "token_type": "Bearer"
     }

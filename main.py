@@ -6,7 +6,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("BCRYPT_PASSWORD")
+BCRYPT_PASSWORD = os.getenv("BCRYPT_PASSWORD")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) # minutes
+REFRESH_TOKEN_EXPIRE_MINUTES = int(os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")) # days
+ALGORITHM = os.getenv("ALGORITHM")
+JWT_TOKEN = os.getenv("JWT_TOKEN")
 
 app = FastAPI()
 
