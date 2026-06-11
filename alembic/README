@@ -1,1 +1,2 @@
-Generic single-database configuration.
+-- Create a migration:  alembic revision --autogenerate -m "message here"
+-- Apply migration:     alembic upgrade head
