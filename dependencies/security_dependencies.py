@@ -1,21 +1,10 @@
-from models import db, User
-from sqlalchemy.orm import sessionmaker, Session
+from dependencies import get_session
+from models import User
+from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from jose import jwt, JWTError
 from main import JWT_TOKEN, ALGORITHM, oauth2_schema
 from datetime import datetime, timezone
-
-def get_session():
-    try:
-        Session = sessionmaker(bind=db)
-        session = Session()
-        yield session
-    except Exception as e:
-        print(e)
-        raise
-    finally:
-        session.close()
-
 
 def verify_token(token: str = Depends(oauth2_schema), session: Session = Depends(get_session)):
 
@@ -29,11 +18,11 @@ def verify_token(token: str = Depends(oauth2_schema), session: Session = Depends
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
-    if is_token_expired(expiration_date):
+    if _is_token_expired(expiration_date):
         raise HTTPException(status_code=401, detail="Token expired")
     return user
 
 
-def is_token_expired(expiration_date: datetime):
+def _is_token_expired(expiration_date: datetime):
     datetime_expiration = datetime.fromtimestamp(expiration_date, timezone.utc)
     return datetime.now(timezone.utc) > datetime_expiration
