@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from models import User, db
-from sqlalchemy.orm import sessionmaker
+from models import User
 from dependencies import get_session
+from main import bcrypt_context
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -14,7 +14,8 @@ async def create_account(name: str, email: str, password: str, session = Depends
         return {"message": "User with this email already exists"}
     
     else:
-        new_user = User(name=name, email=email, password=password)
+        hashed_password = bcrypt_context.hash(password)
+        new_user = User(name=name, email=email, password=hashed_password)
         session.add(new_user)
         session.commit()
         return {"message": "User created successfully"}
