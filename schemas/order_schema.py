@@ -8,6 +8,7 @@ class OrderItemCreateSchema(BaseModel):
         from_attributes = True
 class RequestCreateOrderSchema(BaseModel):
     items: list[OrderItemCreateSchema]
+    user_id: int
 
     class Config:
         from_attributes = True
