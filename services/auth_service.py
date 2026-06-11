@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from services.password_service import PasswordService
 from models import User
 from services.jwt_service import JwtService
-
+from fastapi.security import OAuth2PasswordRequestForm
 class AuthService:
 
     def __init__(self, user_repository: UserRepository, password_service: PasswordService, jwt_service: JwtService):
@@ -30,7 +30,7 @@ class AuthService:
 
         return self._repository.create(new_user)
 
-    def login(self, login_schema: RequestLoginSchema):
+    def login(self, login_schema: RequestLoginSchema) -> ResponseLoginSchema:
         user = self._repository.get_by_email(login_schema.email)
 
         if not user:
@@ -44,6 +44,26 @@ class AuthService:
         access_token = self._jwt_service.create_access_token(user.id)
         refresh_token = self._jwt_service.create_refresh_token(user.id)
         
+        return ResponseLoginSchema(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="Bearer"
+        )
+
+    def login_form_docs(self, form_data: OAuth2PasswordRequestForm) -> ResponseLoginSchema:
+        user = self._repository.get_by_email(form_data.username)
+
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        hashed_stored_password = user.password
+        
+        if not self._password_service.verify_password(form_data.password, hashed_stored_password):
+            raise HTTPException(status_code=401, detail="Invalid password")
+
+        access_token = self._jwt_service.create_access_token(user.id)
+        refresh_token = self._jwt_service.create_refresh_token(user.id)
+
         return ResponseLoginSchema(
             access_token=access_token,
             refresh_token=refresh_token,
