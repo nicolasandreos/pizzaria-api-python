@@ -1,10 +1,21 @@
 import os
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, Boolean, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, Boolean, create_engine, Enum as sqlEnum
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
-from sqlalchemy_utils import ChoiceType
 from dotenv import load_dotenv
+from enum import Enum
+
+class OrderStatus(Enum):
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+class Size(Enum):
+    SMALL = "SMALL"
+    MEDIUM = "MEDIUM"
+    LARGE = "LARGE"
 
 load_dotenv()
 
@@ -33,17 +44,10 @@ class User(Base):
 class Order(Base):
     __tablename__ = "orders"
 
-    ORDER_STATUS = [
-        ("PENDING", "PENDING"),
-        ("IN_PROGRESS", "IN_PROGRESS"),
-        ("COMPLETED", "COMPLETED"),
-        ("CANCELLED", "CANCELLED"),
-    ]
-
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     user_id = Column("user_id", ForeignKey("users.id"), nullable=False)
     price = Column("price", Float, nullable=False)
-    status = Column("status", ChoiceType(ORDER_STATUS), nullable=False, default="PENDING")
+    status = Column("status", sqlEnum(OrderStatus), nullable=False, default=OrderStatus.PENDING)
 
     def __init__(self, user_id: int, price: float, status: str = "PENDING") -> None:
         self.user_id = user_id
@@ -53,17 +57,11 @@ class Order(Base):
 class Product(Base):
     __tablename__ = "products"
 
-    SIZE_CHOICES = [
-        ("S", "S"),
-        ("M", "M"),
-        ("L", "L")
-    ]
-
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", String(255), nullable=False)
     price = Column("price", Float, nullable=False)
     description = Column("description", String(255), nullable=False)
-    size = Column("size", ChoiceType(SIZE_CHOICES), nullable=False, default="M")
+    size = Column("size", sqlEnum(Size), nullable=False)
 
     def __init__(self, name: str, price: float, description: str, size: str) -> None:
         self.name = name
