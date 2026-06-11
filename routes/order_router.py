@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_session
 from models import Order, User
-from schemas.order_schema import OrderSchema
+from schemas.order_schema import RequestCreateOrderSchema
 
 order_router = APIRouter(prefix="/order", tags=["order"])
 
 @order_router.post("/create")
-async def create_order(order_schema: OrderSchema, session: Session = Depends(get_session)):
+async def create_order(order_schema: RequestCreateOrderSchema, session: Session = Depends(get_session)):
 
     user_by_id = session.query(User).filter(User.id == order_schema.user_id).first()
 

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class OrderSchema(BaseModel):
+class RequestCreateOrderSchema(BaseModel):
     user_id: int
     price: float
 

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class UserSchema(BaseModel):
+class RequestCreateUserSchema(BaseModel):
     name: str
     email: str
     password: str
@@ -12,6 +12,6 @@ class UserSchema(BaseModel):
     class Config:
         from_attributes = True
 
-class LoginSchema(BaseModel):
+class RequestLoginSchema(BaseModel):
     email: str
     password: str

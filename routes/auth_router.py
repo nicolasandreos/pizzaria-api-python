@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from models import User
 from dependencies import get_session
 from main import bcrypt_context
-from schemas.user_schema import UserSchema, LoginSchema
+from schemas.user_schema import RequestCreateUserSchema, RequestLoginSchema
 from sqlalchemy.orm import Session
 from jose import jwt
 
@@ -20,7 +20,7 @@ def create_token(user_id: int):
     
 
 @auth_router.post("/register")
-async def create_account(user_schema: UserSchema, session: Session = Depends(get_session)):
+async def create_account(user_schema: RequestCreateUserSchema, session: Session = Depends(get_session)):
     user_by_email = session.query(User)\
         .filter(User.email == user_schema.email).first()
 
@@ -35,7 +35,7 @@ async def create_account(user_schema: UserSchema, session: Session = Depends(get
         return {"message": f"User created successfully: Name: {new_user.name} Email: {new_user.email}"}
 
 @auth_router.post("/login")
-async def login(login_schema: LoginSchema, session: Session = Depends(get_session)):
+async def login(login_schema: RequestLoginSchema, session: Session = Depends(get_session)):
     user = session.query(User).filter(User.email == login_schema.email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
