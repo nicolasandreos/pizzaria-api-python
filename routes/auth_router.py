@@ -1,14 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from models import User, db
 from sqlalchemy.orm import sessionmaker
+from dependencies import get_session
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.post("/register")
-async def create_account(name: str, email: str, password: str):
-    Session = sessionmaker(bind=db)
-    session = Session()
-
+async def create_account(name: str, email: str, password: str, session = Depends(get_session)):
     user_by_email = session.query(User)\
         .filter(User.email == email).first()
 
