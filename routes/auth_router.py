@@ -1,8 +1,6 @@
-import os
-
 from fastapi import APIRouter, Depends, HTTPException
 from models import User
-from dependencies import get_session
+from dependencies import get_session, verify_token
 from main import bcrypt_context, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, JWT_TOKEN, REFRESH_TOKEN_EXPIRE_MINUTES
 from schemas.user_schema import RequestCreateUserSchema, RequestLoginSchema
 from sqlalchemy.orm import Session
@@ -14,7 +12,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 def create_token(user_id: int, token_duration: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
     expiration_date = datetime.now(timezone.utc) + token_duration
     payload ={
-        "sub": user_id,
+        "sub": str(user_id),
         "exp": expiration_date
     }
     token = jwt.encode(
@@ -23,6 +21,7 @@ def create_token(user_id: int, token_duration: timedelta = timedelta(minutes=ACC
         algorithm=ALGORITHM
     )
     return token
+
     
 
 @auth_router.post("/register")
@@ -55,5 +54,13 @@ async def login(login_schema: RequestLoginSchema, session: Session = Depends(get
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
+        "token_type": "Bearer"
+    }
+
+@auth_router.get("/refresh-access-token")
+async def refresh_access_token(user: User = Depends(verify_token), session: Session = Depends(get_session)):
+    access_token = create_token(user.id)
+    return {
+        "access_token": access_token,
         "token_type": "Bearer"
     }
