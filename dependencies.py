@@ -8,5 +8,6 @@ def get_session():
         yield session
     except Exception as e:
         print(e)
+        raise
     finally:
         session.close()
