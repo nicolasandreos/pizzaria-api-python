@@ -48,15 +48,23 @@ class Order(Base):
 class Product(Base):
     __tablename__ = "products"
 
+    SIZE_CHOICES = [
+        ("S", "S"),
+        ("M", "M"),
+        ("L", "L")
+    ]
+
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", String(255), nullable=False)
     price = Column("price", Float, nullable=False)
     description = Column("description", String(255), nullable=False)
+    size = Column("size", ChoiceType(SIZE_CHOICES), nullable=False, default="M")
 
-    def __init__(self, name: str, price: float, description: str) -> None:
+    def __init__(self, name: str, price: float, description: str, size: str) -> None:
         self.name = name
         self.price = price
         self.description = description
+        self.size = size
 
 class OrderProduct(Base):
     __tablename__ = "order_products"
