@@ -11,3 +11,7 @@ class UserSchema(BaseModel):
     # permite que o scjhema seja criado a partir dos atributos de um objeto
     class Config:
         from_attributes = True
+
+class LoginSchema(BaseModel):
+    email: str
+    password: str
