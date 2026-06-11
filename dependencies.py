@@ -33,6 +33,7 @@ def verify_token(token: str = Depends(oauth2_schema), session: Session = Depends
         raise HTTPException(status_code=401, detail="Token expired")
     return user
 
+
 def is_token_expired(expiration_date: datetime):
     datetime_expiration = datetime.fromtimestamp(expiration_date, timezone.utc)
     return datetime.now(timezone.utc) > datetime_expiration
