@@ -1,56 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from dependencies.order_dependencies import get_order_service
 from dependencies.session_dependencies import get_session
 from dependencies.security_dependencies import verify_token
 from models import Order, Product, User, OrderProduct
 from models.enums.order_status import OrderStatus
 from schemas.request.order.create_schema import RequestCreateOrderSchema
+from services.order_service import OrderService
 
 order_router = APIRouter(prefix="/order", tags=["order"], dependencies=[Depends(verify_token)])
 
 @order_router.post("/create")
-async def create_order(order_schema: RequestCreateOrderSchema, session: Session = Depends(get_session), user: User = Depends(verify_token)):
-
-    if user.active == False:
-        raise HTTPException(status_code=403, detail="User is not active and is forbidden to create an order")
-    
-    total_price = 0
-    for product in order_schema.items:
-        product_db = session.query(Product).filter(Product.id == product.product_id).first()
-        if not product_db:
-            raise HTTPException(status_code=404, detail="Product not found")
-        total_price += product_db.price * product.quantity
-
-    new_order = Order(user_id=user.id, price=total_price)
-
-    session.add(new_order)
-    session.flush()
-
-    for product in order_schema.items:
-        product_db = session.query(Product).filter(Product.id == product.product_id).first()
-
-        if not product_db:
-            raise HTTPException(status_code=404, detail="Product not found")
-
-        order_product = OrderProduct(order_id=new_order.id, product_id=product_db.id, quantity=product.quantity, unit_price=product_db.price)
-        session.add(order_product)
-
-    session.commit()
-
-    return {
-        "message": "Order created successfully",
-        "order_id": new_order.id,
-        "user_id": user.id,
-        "order_price": new_order.price,
-        "items": [
-            {
-                "product_id": product.product_id,
-                "quantity": product.quantity,
-                "unit_price": product_db.price
-            }
-            for product in order_schema.items
-        ]
-    }
+async def create_order(order_schema: RequestCreateOrderSchema, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
+    return order_service.create_order(order_schema, user)
 
 
 @order_router.post("/cancel/{order_id}")
