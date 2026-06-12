@@ -16,29 +16,9 @@ async def create_order(order_schema: RequestCreateOrderSchema, order_service: Or
 
 
 @order_router.post("/cancel/{order_id}")
-async def cancel_order(order_id: int, session: Session = Depends(get_session), user: User = Depends(verify_token)):
-    is_user_admin = bool(user.admin)
+async def cancel_order(order_id: int, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
+    return order_service.cancel_order(order_id, user)
 
-    order = session.query(Order).filter(Order.id == order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-
-    is_user_order = order.user_id == user.id
-
-    if not is_user_admin and not is_user_order:
-        raise HTTPException(status_code=403, detail="You are not authorized to cancel this order")
-
-    if order.status not in [OrderStatus.PENDING, OrderStatus.IN_PROGRESS]:
-        raise HTTPException(status_code=400, detail="Order is not pending or in progress and cannot be cancelled")
-
-    order.status = OrderStatus.CANCELLED
-    session.commit()
-    return {
-        "message": "Order cancelled successfully",
-        "order_id": order.id,
-        "order_status": order.status,
-        "order_price": order.price,
-    }
 
 @order_router.get("/all")
 async def get_all_orders(session: Session = Depends(get_session), user: User = Depends(verify_token)):

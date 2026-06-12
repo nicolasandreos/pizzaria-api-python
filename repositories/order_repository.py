@@ -18,3 +18,10 @@ class OrderRepository:
         self._session.add(order_product)
         self._session.flush()
         return order_product
+
+    def get_order_by_id(self, order_id: int) -> Order | None:
+        return self._session.query(Order).filter(Order.id == order_id).first()
+
+    def update_order(self, order: Order) -> Order:
+        self._session.commit()
+        return order

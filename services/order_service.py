@@ -1,11 +1,13 @@
 from repositories.order_repository import OrderRepository
 from schemas.request.order.create_schema import RequestCreateOrderSchema
-from models import User, Order, OrderProduct, Product
+from models import User, Order, OrderProduct
+from models.enums.order_status import OrderStatus
 from exceptions.auth_exceptions import UserNotActiveException
 from exceptions.product_exception import ProductNotFoundException
-from exceptions.order_exception import OrderNotCreatedException
+from exceptions.order_exception import OrderNotCreatedException, OrderNotFoundException, OrderNotAuthorizedToCancelException, OrderNotValidToCancelException
 from exceptions.order_product import OrderProductNotCreatedException
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
+from schemas.response.order.cancel_schema import ResponseCancelOrderSchema
 
 class OrderService:
 
@@ -54,4 +56,29 @@ class OrderService:
             user_id=user.id,
             order_price=created_order.price,
             items=order_schema.items
+        )
+
+    def cancel_order(self, order_id: int, user: User):
+        is_user_admin = bool(user.admin)
+
+        order = self._repository.get_order_by_id(order_id)
+        if not order:
+            raise OrderNotFoundException()
+
+        is_user_order = order.user_id == user.id
+
+        if not is_user_admin or not is_user_order:
+            raise OrderNotAuthorizedToCancelException()
+
+        if order.status not in [OrderStatus.PENDING, OrderStatus.IN_PROGRESS]:
+            raise OrderNotValidToCancelException()
+
+        order.status = OrderStatus.CANCELLED
+        self._repository.update_order(order)
+
+        return ResponseCancelOrderSchema(
+            message="Order cancelled successfully",
+            order_id=order.id,
+            order_status=order.status,
+            order_price=order.price
         )
