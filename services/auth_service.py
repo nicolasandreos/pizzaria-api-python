@@ -1,4 +1,4 @@
-from repository.user_repository import UserRepository
+from repositories.user_repository import UserRepository
 from schemas.request.auth.create_user_schema import RequestCreateUserSchema
 from schemas.request.auth.login_user_schema import RequestLoginSchema
 from schemas.response.auth.login_schema import ResponseLoginSchema
@@ -39,18 +39,8 @@ class AuthService:
         )
 
     def login(self, login_schema: RequestLoginSchema) -> ResponseLoginSchema:
-        user = self._repository.get_by_email(login_schema.email)
-
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        hashed_stored_password = user.password
-        
-        if not self._password_service.verify_password(login_schema.password, hashed_stored_password):
-            raise HTTPException(status_code=401, detail="Invalid password")
-
-        access_token = self._jwt_service.create_access_token(user.id)
-        refresh_token = self._jwt_service.create_refresh_token(user.id)
+        user = self._authenticate_user(login_schema.email, login_schema.password)
+        access_token, refresh_token = self._generate_tokens(user)
         
         return ResponseLoginSchema(
             access_token=access_token,
@@ -59,21 +49,27 @@ class AuthService:
         )
 
     def login_form_docs(self, form_data: OAuth2PasswordRequestForm) -> ResponseLoginSchema:
-        user = self._repository.get_by_email(form_data.username)
-
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        hashed_stored_password = user.password
-        
-        if not self._password_service.verify_password(form_data.password, hashed_stored_password):
-            raise HTTPException(status_code=401, detail="Invalid password")
-
-        access_token = self._jwt_service.create_access_token(user.id)
-        refresh_token = self._jwt_service.create_refresh_token(user.id)
+        user = self._authenticate_user(form_data.username, form_data.password)
+        access_token, refresh_token = self._generate_tokens(user)
 
         return ResponseLoginSchema(
             access_token=access_token,
             refresh_token=refresh_token,
             token_type="Bearer"
         )
+
+    def _authenticate_user(self, email: str, password: str) -> User:
+        user = self._repository.get_by_email(email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        hashed_stored_password = user.password
+        if not self._password_service.verify_password(password, hashed_stored_password):
+            raise HTTPException(status_code=401, detail="Invalid password")
+        return user
+
+
+    def _generate_tokens(self, user: User) -> tuple[str, str]:
+        access_token = self._jwt_service.create_access_token(user.id)
+        refresh_token = self._jwt_service.create_refresh_token(user.id)
+        return access_token, refresh_token

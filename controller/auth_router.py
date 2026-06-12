@@ -30,11 +30,11 @@ async def login_form_docs(form_data: OAuth2PasswordRequestForm = Depends(), auth
     return auth_service.login_form_docs(form_data)
 
 
-@auth_router.post("/register")
+@auth_router.post("/register", response_model=ResponseCreateUserSchema)
 async def create_account(user_schema: RequestCreateUserSchema, auth_service: AuthService = Depends(get_auth_service)) -> ResponseCreateUserSchema:
     return auth_service.register(user_schema)
 
 
-@auth_router.get("/refresh-access-token")
+@auth_router.post("/refresh-access-token", response_model=ResponseAccessTokenSchema)
 async def refresh_access_token(user: User = Depends(verify_token), jwt_service: JwtService = Depends(get_jwt_service)) -> ResponseAccessTokenSchema:
     return jwt_service.create_access_token(user.id)
