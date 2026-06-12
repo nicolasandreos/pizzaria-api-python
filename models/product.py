@@ -1,6 +1,6 @@
 from database.base import Base
 from sqlalchemy import Column, Integer, String, Float
-from enums.pizza_size import Size
+from .enums.pizza_size import Size
 from sqlalchemy.types import Enum as sqlEnum
 
 class Product(Base):

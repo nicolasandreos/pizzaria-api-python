@@ -1,4 +1,4 @@
-from base_exception import BaseException
+from .base_exception import BaseException
 
 class InvalidCredentialsException(BaseException):
     def __init__(self):

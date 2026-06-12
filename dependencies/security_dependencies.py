@@ -1,4 +1,4 @@
-from dependencies import get_session
+from dependencies.session_dependencies import get_session
 from models import User
 from sqlalchemy.orm import Session
 from fastapi import Depends

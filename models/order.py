@@ -1,6 +1,6 @@
 from database.base import Base
 from sqlalchemy import Column, Integer, ForeignKey, Float
-from enums.order_status import OrderStatus
+from .enums.order_status import OrderStatus
 from sqlalchemy.types import Enum as sqlEnum
 
 class Order(Base):

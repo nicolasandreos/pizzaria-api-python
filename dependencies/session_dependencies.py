@@ -1,10 +1,9 @@
-from models import db
+from database.engine import engine
 from sqlalchemy.orm import sessionmaker, Session
-from fastapi import Depends
 
 def get_session() -> Session:
     try:
-        Session = sessionmaker(bind=db)
+        Session = sessionmaker(bind=engine)
         session = Session()
         yield session
     except Exception as e:
