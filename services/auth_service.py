@@ -2,6 +2,7 @@ from repository.user_repository import UserRepository
 from schemas.request.auth.create_user_schema import RequestCreateUserSchema
 from schemas.request.auth.login_user_schema import RequestLoginSchema
 from schemas.response.auth.login_schema import ResponseLoginSchema
+from schemas.response.auth.create_user_schema import ResponseCreateUserSchema
 from fastapi import HTTPException
 from services.password_service import PasswordService
 from models import User
@@ -14,7 +15,7 @@ class AuthService:
         self._password_service = password_service
         self._jwt_service = jwt_service
 
-    def register(self, register_schema: RequestCreateUserSchema):
+    def register(self, register_schema: RequestCreateUserSchema) -> ResponseCreateUserSchema:
         user = self._repository.get_by_email(register_schema.email)
 
         if user:
@@ -28,7 +29,14 @@ class AuthService:
             password=hashed_password
         )
 
-        return self._repository.create(new_user)
+        created_user = self._repository.create(new_user)
+
+        return ResponseCreateUserSchema(
+            name=created_user.name,
+            email=created_user.email,
+            active=created_user.active,
+            admin=created_user.admin
+        )
 
     def login(self, login_schema: RequestLoginSchema) -> ResponseLoginSchema:
         user = self._repository.get_by_email(login_schema.email)
