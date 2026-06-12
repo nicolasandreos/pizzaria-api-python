@@ -1,4 +1,5 @@
-from pydantic import BaseModel, List
+from pydantic import BaseModel
+from typing import List
 
 class OrderItemResponseSchema(BaseModel):
     product_id: int
