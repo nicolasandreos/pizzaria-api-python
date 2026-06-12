@@ -6,8 +6,11 @@ class OrderItemCreateSchema(BaseModel):
     quantity: int
     class Config:
         from_attributes = True
+
+
 class RequestCreateOrderSchema(BaseModel):
     items: list[OrderItemCreateSchema]
 
     class Config:
         from_attributes = True
+
