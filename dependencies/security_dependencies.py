@@ -1,10 +1,12 @@
 from dependencies import get_session
 from models import User
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from jose import jwt, JWTError
 from main import JWT_TOKEN, ALGORITHM, oauth2_schema
 from datetime import datetime, timezone
+from exceptions.auth_exceptions import InvalidRefreshTokenException
+from exceptions.user_exceptions import UserNotFoundException
 
 def verify_token(token: str = Depends(oauth2_schema), session: Session = Depends(get_session)):
 
@@ -13,13 +15,13 @@ def verify_token(token: str = Depends(oauth2_schema), session: Session = Depends
         user_id = int(payload.get("sub"))
         expiration_date = payload.get("exp")
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise InvalidRefreshTokenException()
 
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise UserNotFoundException()
     if _is_token_expired(expiration_date):
-        raise HTTPException(status_code=401, detail="Token expired")
+        raise InvalidRefreshTokenException()
     return user
 
 

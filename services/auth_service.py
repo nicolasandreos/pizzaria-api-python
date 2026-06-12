@@ -3,11 +3,13 @@ from schemas.request.auth.create_user_schema import RequestCreateUserSchema
 from schemas.request.auth.login_user_schema import RequestLoginSchema
 from schemas.response.auth.login_schema import ResponseLoginSchema
 from schemas.response.auth.create_user_schema import ResponseCreateUserSchema
-from fastapi import HTTPException
 from services.password_service import PasswordService
 from models import User
 from services.jwt_service import JwtService
 from fastapi.security import OAuth2PasswordRequestForm
+from exceptions.user_exceptions import UserNotFoundException
+from exceptions.auth_exceptions import InvalidCredentialsException, UserAlreadyExistsException
+
 class AuthService:
 
     def __init__(self, user_repository: UserRepository, password_service: PasswordService, jwt_service: JwtService):
@@ -19,7 +21,7 @@ class AuthService:
         user = self._repository.get_by_email(register_schema.email)
 
         if user:
-            raise HTTPException(status_code=409, detail="User with this email already exists")
+            raise UserAlreadyExistsException()
         
         hashed_password = self._password_service.hash_password(register_schema.password)
 
@@ -61,11 +63,11 @@ class AuthService:
     def _authenticate_user(self, email: str, password: str) -> User:
         user = self._repository.get_by_email(email)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise UserNotFoundException()
         
         hashed_stored_password = user.password
         if not self._password_service.verify_password(password, hashed_stored_password):
-            raise HTTPException(status_code=401, detail="Invalid password")
+            raise InvalidCredentialsException()
         return user
 
 
