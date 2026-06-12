@@ -25,3 +25,6 @@ class OrderRepository:
     def update_order(self, order: Order) -> Order:
         self._session.commit()
         return order
+
+    def get_all_orders(self) -> list[Order]:
+        return self._session.query(Order).all()

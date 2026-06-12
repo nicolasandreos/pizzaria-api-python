@@ -29,3 +29,10 @@ class UserNotActiveException(BaseException):
             message="User is not active and is forbidden to create an order",
             status_code=403
         )
+
+class UserIsNotAdminException(BaseException):
+    def __init__(self):
+        super().__init__(
+            message="User is not admin and is forbidden to get all orders",
+            status_code=403
+        )

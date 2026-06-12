@@ -8,13 +8,15 @@ from exceptions.order_exception import OrderNotCreatedException, OrderNotFoundEx
 from exceptions.order_product import OrderProductNotCreatedException
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
 from schemas.response.order.cancel_schema import ResponseCancelOrderSchema
+from exceptions.auth_exceptions import UserIsNotAdminException
+from schemas.response.order.get_all_schema import ResponseGetAllOrdersSchema
 
 class OrderService:
 
     def __init__(self, order_repository: OrderRepository):
         self._repository = order_repository
 
-    def create_order(self, order_schema: RequestCreateOrderSchema, user: User):
+    def create_order(self, order_schema: RequestCreateOrderSchema, user: User) -> ResponseCreateOrderSchema:
         if user.active == False:
             raise UserNotActiveException()
     
@@ -58,7 +60,7 @@ class OrderService:
             items=order_schema.items
         )
 
-    def cancel_order(self, order_id: int, user: User):
+    def cancel_order(self, order_id: int, user: User) -> ResponseCancelOrderSchema:
         is_user_admin = bool(user.admin)
 
         order = self._repository.get_order_by_id(order_id)
@@ -81,4 +83,13 @@ class OrderService:
             order_id=order.id,
             order_status=order.status,
             order_price=order.price
+        )
+
+    def get_all_orders(self, user: User) -> ResponseGetAllOrdersSchema:
+        if user.admin == False:
+            raise UserIsNotAdminException()
+
+        orders = self._repository.get_all_orders()
+        return ResponseGetAllOrdersSchema(
+            orders=orders
         )
