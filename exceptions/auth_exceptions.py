@@ -22,3 +22,10 @@ class InvalidRefreshTokenException(BaseException):
             message="Invalid refresh token",
             status_code=401
         )
+
+class UserNotActiveException(BaseException):
+    def __init__(self):
+        super().__init__(
+            message="User is not active and is forbidden to create an order",
+            status_code=403
+        )
