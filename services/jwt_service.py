@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from main import ACCESS_TOKEN_EXPIRE_MINUTES, JWT_TOKEN, ALGORITHM, REFRESH_TOKEN_EXPIRE_MINUTES
+from schemas.response.auth.access_token_schema import ResponseAccessTokenSchema
+from schemas.response.auth.refresh_token_schema import ResponseRefreshTokenSchema
 
 class JwtService:
 
@@ -11,12 +13,16 @@ class JwtService:
             "sub": str(user_id),
             "exp": expiration_date
         }
-        token = jwt.encode(
+        access_token = jwt.encode(
             payload,
             JWT_TOKEN,
             algorithm=ALGORITHM
         )
-        return token
+
+        return ResponseAccessTokenSchema(
+            access_token=access_token,
+            token_type="Bearer"
+        )
 
     @staticmethod
     def create_refresh_token(user_id: int):
@@ -25,9 +31,12 @@ class JwtService:
             "sub": str(user_id),
             "exp": expiration_date
         }
-        token = jwt.encode(
+        refresh_token = jwt.encode(
             payload,
             JWT_TOKEN,
             algorithm=ALGORITHM
         )
-        return token
+        return ResponseRefreshTokenSchema(
+            refresh_token=refresh_token,
+            token_type="Bearer"
+        )
