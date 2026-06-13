@@ -1,6 +1,6 @@
-from .base_exception import BaseException
+from .base_exception import ApplicationException
 
-class ProductNotFoundException(BaseException):
+class ProductNotFoundException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="Product not found",

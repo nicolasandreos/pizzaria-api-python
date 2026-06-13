@@ -1,6 +1,6 @@
-from .base_exception import BaseException
+from .base_exception import ApplicationException
 
-class InvalidCredentialsException(BaseException):
+class InvalidCredentialsException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="Invalid credentials",
@@ -8,7 +8,7 @@ class InvalidCredentialsException(BaseException):
         )
 
 
-class UserAlreadyExistsException(BaseException):
+class UserAlreadyExistsException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="User already exists",
@@ -16,21 +16,21 @@ class UserAlreadyExistsException(BaseException):
         )
 
 
-class InvalidRefreshTokenException(BaseException):
+class InvalidRefreshTokenException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="Invalid refresh token",
             status_code=401
         )
 
-class UserNotActiveException(BaseException):
+class UserNotActiveException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="User is not active and is forbidden to create an order",
             status_code=403
         )
 
-class UserIsNotAdminException(BaseException):
+class UserIsNotAdminException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="User is not admin and is forbidden to get all orders",

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 
 # Exceptions
-from exceptions.base_exception import BaseException
+from exceptions.base_exception import ApplicationException
 from handlers.exception_handlers import api_exception_handler
 
 load_dotenv()
@@ -18,7 +18,7 @@ JWT_TOKEN = os.getenv("JWT_TOKEN")
 app = FastAPI()
 
 # Exception handlers
-app.add_exception_handler(BaseException, api_exception_handler)
+app.add_exception_handler(ApplicationException, api_exception_handler)
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-form-docs")
 

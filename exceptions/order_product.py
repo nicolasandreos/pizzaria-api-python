@@ -1,6 +1,6 @@
-from .base_exception import BaseException
+from .base_exception import ApplicationException
 
-class OrderProductNotCreatedException(BaseException):
+class OrderProductNotCreatedException(ApplicationException):
     def __init__(self):
         super().__init__(
             message="Failed to create order product",

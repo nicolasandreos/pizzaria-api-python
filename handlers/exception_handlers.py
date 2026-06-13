@@ -1,10 +1,10 @@
-from exceptions.base_exception import BaseException
+from exceptions.base_exception import ApplicationException
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from schemas.response.error.error_schema import ErrorSchema
 
 
-async def api_exception_handler(request: Request, exc: BaseException) -> JSONResponse:
+async def api_exception_handler(request: Request, exc: ApplicationException) -> JSONResponse:
     error_schema = ErrorSchema(
         message=exc.message,
         status_code=exc.status_code
