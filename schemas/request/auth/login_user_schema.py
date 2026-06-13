@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
-import re
-from exceptions.validation_exception import InvalidTypeException, InvalidEmailException, InvalidPasswordException
+from validators.email_validator import EmailValidator
+from validators.password_validator import PasswordValidator
 
 class RequestLoginSchema(BaseModel):
     email: str
@@ -9,17 +9,9 @@ class RequestLoginSchema(BaseModel):
     @field_validator("email", mode="before")
     @classmethod
     def validate_email(cls, value) -> str:
-        if not isinstance(value, str):
-            raise InvalidTypeException(expected_type=str, actual_type=type(value), field_name="email")
-        if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", value.strip()):
-            raise InvalidEmailException()
-        return value.strip()
+        return EmailValidator.validate(value)
 
     @field_validator("password", mode="before")
     @classmethod
     def validate_password(cls, value) -> str:
-        if not isinstance(value, str):
-            raise InvalidTypeException(expected_type=str, actual_type=type(value), field_name="password")
-        if len(value.strip()) < 6:
-            raise InvalidPasswordException()
-        return value.strip()
+        return PasswordValidator.validate(value)
