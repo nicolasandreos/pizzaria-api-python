@@ -3,10 +3,11 @@ import os
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.exceptions import RequestValidationError
 
 # Exceptions
 from exceptions.base_exception import ApplicationException
-from handlers.exception_handlers import api_exception_handler
+from handlers.exception_handlers import api_exception_handler, pydantic_request_validation_exception_handler
 
 load_dotenv()
 
@@ -19,6 +20,7 @@ app = FastAPI()
 
 # Exception handlers
 app.add_exception_handler(ApplicationException, api_exception_handler)
+app.add_exception_handler(RequestValidationError, pydantic_request_validation_exception_handler)
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-form-docs")
 
