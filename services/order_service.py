@@ -8,8 +8,7 @@ from exceptions.order_exception import OrderNotCreatedException, OrderNotFoundEx
 from exceptions.order_product import OrderProductNotCreatedException
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
 from schemas.response.order.cancel_schema import ResponseCancelOrderSchema
-from exceptions.auth_exceptions import UserIsNotAdminException
-from schemas.response.order.get_all_schema import ResponseGetAllOrdersSchema
+from schemas.response.order.get_all_schema import ResponseGetAllOrdersSchema, OrderSchema
 
 class OrderService:
 
@@ -85,11 +84,15 @@ class OrderService:
             order_price=order.price
         )
 
-    def get_all_orders(self, user: User) -> ResponseGetAllOrdersSchema:
-        if user.admin == False:
-            raise UserIsNotAdminException()
-
+    def get_all_orders(self, admin_user: User) -> ResponseGetAllOrdersSchema:
         orders = self._repository.get_all_orders()
+        orders_schema = [OrderSchema(
+            order_id=order.id,
+            user_id=order.user_id,
+            order_price=order.price,
+            order_status=order.status
+        ) for order in orders]
         return ResponseGetAllOrdersSchema(
-            orders=orders
+            orders=orders_schema
         )
+

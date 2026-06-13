@@ -1,6 +1,5 @@
 from pydantic import BaseModel, field_validator, Field
 from typing import Optional
-from exceptions.validation_exception import InvalidNameException, InvalidTypeException
 from validators.email_validator import EmailValidator
 from validators.password_validator import PasswordValidator
 

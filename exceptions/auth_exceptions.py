@@ -33,6 +33,6 @@ class UserNotActiveException(ApplicationException):
 class UserIsNotAdminException(ApplicationException):
     def __init__(self):
         super().__init__(
-            message="User is not admin and is forbidden to get all orders",
+            message="User is not admin and is forbidden to access this resource",
             status_code=403
         )

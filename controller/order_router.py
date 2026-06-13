@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from dependencies.order_dependencies import get_order_service
+from dependencies.admin_dependencies import get_admin_user
 from dependencies.security_dependencies import verify_token
 from schemas.request.order.create_schema import RequestCreateOrderSchema
 from services.order_service import OrderService
@@ -21,6 +22,6 @@ async def cancel_order(order_id: int, order_service: OrderService = Depends(get_
 
 
 @order_router.get("/all", response_model=ResponseGetAllOrdersSchema)
-async def get_all_orders(order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
-    return order_service.get_all_orders(user)
+async def get_all_orders(order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
+    return order_service.get_all_orders(admin_user)
 
