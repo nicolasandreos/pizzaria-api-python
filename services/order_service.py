@@ -7,6 +7,7 @@ from exceptions.product_exception import ProductNotFoundException
 from exceptions.order_exception import NotAuthorizedToGetOrderException, OrderNotCreatedException, OrderNotFoundException, OrderNotAuthorizedToCancelException, OrderNotValidToCancelException, OrderNotValidToCompleteException, OrderNotValidToStartException
 from exceptions.order_product import OrderProductNotCreatedException
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
+from schemas.response.order.dashboard_schema import ResponseGetAllOrdersDashboardSchema
 from schemas.response.order.get_all_schema import ResponseGetAllOrdersSchema, OrderSchema
 from repositories.product_repository import ProductRepository
 from schemas.response.order.get_order_schema import OrderItemResponseSchema, ResponseGetOrderSchema
@@ -167,4 +168,17 @@ class OrderService:
                 unit_price=order_product.unit_price
             ) for order_product in order.order_products],
             order_status=order.status
+        )
+
+    def get_all_orders_dashboard(self) -> ResponseGetAllOrdersDashboardSchema:
+        total_orders = self._repository.get_count_total_orders()
+        completed_orders = self._repository.get_count_completed_orders()
+        cancelled_orders = self._repository.get_count_cancelled_orders()
+        revenue = self._repository.get_total_revenue()
+
+        return ResponseGetAllOrdersDashboardSchema(
+            total_orders=int(total_orders),
+            completed_orders=int(completed_orders),
+            cancelled_orders=int(cancelled_orders),
+            revenue=round(float(revenue), 2)
         )

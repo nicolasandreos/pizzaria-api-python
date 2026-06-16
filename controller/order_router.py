@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from dependencies.order_dependencies import get_order_service
 from dependencies.admin_dependencies import get_admin_user
 from dependencies.security_dependencies import verify_token
 from schemas.request.order.create_schema import RequestCreateOrderSchema
+from schemas.response.order.dashboard_schema import ResponseGetAllOrdersDashboardSchema
 from schemas.response.order.get_order_schema import ResponseGetOrderSchema
 from services.order_service import OrderService
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
@@ -11,29 +12,32 @@ from models import User
 
 order_router = APIRouter(prefix="/order", tags=["order"], dependencies=[Depends(verify_token)])
 
-@order_router.post("/create", response_model=ResponseCreateOrderSchema)
+@order_router.post("/create", response_model=ResponseCreateOrderSchema, status_code=status.HTTP_201_CREATED)
 async def create_order(order_schema: RequestCreateOrderSchema, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
     return order_service.create_order(order_schema, user)
 
-@order_router.get("/all", response_model=ResponseGetAllOrdersSchema)
+@order_router.get("/all", response_model=ResponseGetAllOrdersSchema, status_code=status.HTTP_200_OK)
 async def get_all_orders(order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
     return order_service.get_all_orders(admin_user)
 
+@order_router.get("/dashboard", response_model=ResponseGetAllOrdersDashboardSchema, status_code=status.HTTP_200_OK)
+async def get_dashboard(order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
+    return order_service.get_all_orders_dashboard()
 
-@order_router.get("/{order_id}", response_model=ResponseGetOrderSchema)
+@order_router.get("/{order_id}", response_model=ResponseGetOrderSchema, status_code=status.HTTP_200_OK)
 async def get_order(order_id: int, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
     return order_service.get_order(order_id, user)
 
 
-@order_router.patch("/{order_id}/start", response_model=ResponseGetOrderSchema)
+@order_router.patch("/{order_id}/start", response_model=ResponseGetOrderSchema, status_code=status.HTTP_200_OK)
 async def start_order(order_id: int, order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
     return order_service.start_order(order_id)
 
 
-@order_router.patch("/{order_id}/complete", response_model=ResponseGetOrderSchema)
+@order_router.patch("/{order_id}/complete", response_model=ResponseGetOrderSchema, status_code=status.HTTP_200_OK)
 async def complete_order(order_id: int, order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
     return order_service.complete_order(order_id)
 
-@order_router.patch("/{order_id}/cancel", response_model=ResponseGetOrderSchema)
+@order_router.patch("/{order_id}/cancel", response_model=ResponseGetOrderSchema, status_code=status.HTTP_200_OK)
 async def cancel_order(order_id: int, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
     return order_service.cancel_order(order_id, user)

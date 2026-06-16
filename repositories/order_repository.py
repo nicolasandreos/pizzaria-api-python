@@ -1,5 +1,7 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from models import Order, OrderProduct, Product
+from models.enums.order_status import OrderStatus
 
 class OrderRepository:
 
@@ -28,3 +30,16 @@ class OrderRepository:
 
     def get_all_orders(self) -> list[Order]:
         return self._session.query(Order).all()
+
+    def get_count_total_orders(self) -> int:
+        return self._session.query(Order).count()
+
+    def get_count_completed_orders(self) -> int:
+        return self._session.query(Order).filter(Order.status == OrderStatus.COMPLETED).count() or 0
+
+    def get_count_cancelled_orders(self) -> int:
+        return self._session.query(Order).filter(Order.status == OrderStatus.CANCELLED).count() or 0
+
+    # Adicionar filtro onde status = completo
+    def get_total_revenue(self) -> float:
+        return self._session.query(func.sum(Order.price)).filter(Order.status == OrderStatus.COMPLETED).scalar() or 0
