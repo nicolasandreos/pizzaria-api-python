@@ -4,7 +4,6 @@ from dependencies.admin_dependencies import get_admin_user
 from dependencies.security_dependencies import verify_token
 from schemas.request.order.create_schema import RequestCreateOrderSchema
 from schemas.response.order.get_order_schema import ResponseGetOrderSchema
-from schemas.response.order.start_order_schema import ResponseStartOrderSchema
 from services.order_service import OrderService
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
 from schemas.response.order.cancel_schema import ResponseCancelOrderSchema
@@ -33,6 +32,11 @@ async def get_order(order_id: int, order_service: OrderService = Depends(get_ord
     return order_service.get_order(order_id, user)
 
 
-@order_router.patch("/{order_id}/start", response_model=ResponseStartOrderSchema)
+@order_router.patch("/{order_id}/start", response_model=ResponseGetOrderSchema)
 async def start_order(order_id: int, order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
     return order_service.start_order(order_id)
+
+
+@order_router.patch("/{order_id}/complete", response_model=ResponseGetOrderSchema)
+async def complete_order(order_id: int, order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
+    return order_service.complete_order(order_id)

@@ -41,3 +41,10 @@ class OrderNotValidToStartException(ApplicationException):
             message="Order is not valid to start",
             status_code=400
         )
+
+class OrderNotValidToCompleteException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="Order is not valid to complete",
+            status_code=400
+        )
