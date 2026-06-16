@@ -47,3 +47,11 @@ class UserAlreadyActiveException(ApplicationException):
             status_code=400
         )
     pass
+
+class UserAlreadyAdminException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="User is already admin",
+            status_code=400
+        )
+    pass

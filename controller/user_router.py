@@ -24,4 +24,6 @@ async def deactivate(user_id: int, user_service = Depends(get_user_service), adm
 async def activate(user_id: int, user_service = Depends(get_user_service), admin_user: User = Depends(get_admin_user)) -> ResponseUserSchema:
     return user_service.activate(user_id)
 
-    
+@user_router.patch("/activate-admin/{user_id}", response_model=ResponseUserSchema)
+async def activate_admin(user_id: int, user_service = Depends(get_user_service), admin_user: User = Depends(get_admin_user)) -> ResponseUserSchema:
+    return user_service.activate_admin(user_id)

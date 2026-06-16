@@ -1,4 +1,4 @@
-from exceptions.user_exceptions import InvalidCurrentPasswordException, InvalidNewPasswordException, UserAlreadyActiveException, UserAlreadyDeactivatedException, UserNotFoundException
+from exceptions.user_exceptions import InvalidCurrentPasswordException, InvalidNewPasswordException, UserAlreadyActiveException, UserAlreadyAdminException, UserAlreadyDeactivatedException, UserNotFoundException
 from exceptions.validation_exception import InvalidPasswordException
 from models.user import User
 from repositories.user_repository import UserRepository
@@ -76,6 +76,26 @@ class UserService:
             raise UserAlreadyActiveException()
 
         user.active = True
+        self._repository.update(user)
+
+        return ResponseUserSchema(
+            name=user.name,
+            email=user.email,
+            active=user.active,
+            admin=user.admin,
+            created_at=user.created_at
+        )
+
+
+    def activate_admin(self, user_id: int) -> ResponseUserSchema:
+        user = self._repository.get_by_id(user_id)
+        if not user:
+            raise UserNotFoundException()
+        
+        if user.admin:
+            raise UserAlreadyAdminException()
+
+        user.admin = True
         self._repository.update(user)
 
         return ResponseUserSchema(
