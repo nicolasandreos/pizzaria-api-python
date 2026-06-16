@@ -113,6 +113,7 @@ class OrderService:
             order_id=order_id,
             user_id=user.id,
             order_price=order.price,
+            order_status=order.status,
             items=[OrderItemResponseSchema(
                 product_name=order_product.product.name,
                 quantity=order_product.quantity,

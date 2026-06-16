@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from models.enums.order_status import OrderStatus
 
 class OrderItemResponseSchema(BaseModel):
     product_name: str
@@ -11,3 +12,4 @@ class ResponseGetOrderSchema(BaseModel):
     user_id: int
     order_price: float
     items: List[OrderItemResponseSchema]
+    order_status: OrderStatus
