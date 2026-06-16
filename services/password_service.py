@@ -1,12 +1,14 @@
 from passlib.context import CryptContext
 
+_bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
 class PasswordService:
 
-    def __init__(self):
-        self.bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    @staticmethod
+    def hash_password(password: str) -> str:
+        return _bcrypt_context.hash(password)
 
-    def hash_password(self, password: str):
-        return self.bcrypt_context.hash(password)
-
-    def verify_password(self, password: str, hashed_password: str):
-        return self.bcrypt_context.verify(password, hashed_password)
+    @staticmethod
+    def verify_password(password: str, hashed_password: str) -> bool:
+        return _bcrypt_context.verify(password, hashed_password)

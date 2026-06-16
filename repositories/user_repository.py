@@ -21,6 +21,10 @@ class UserRepository:
             .first()
         )
     
+    def update(self, user: User) -> User:
+        self.session.commit()
+        return user
+    
     def create(self, user: User) -> User:
         self.session.add(user)
         self.session.commit()

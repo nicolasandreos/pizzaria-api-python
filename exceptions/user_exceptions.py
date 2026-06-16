@@ -15,3 +15,19 @@ class ProductNotFoundException(ApplicationException):
             status_code=404
         )
     pass
+
+class InvalidCurrentPasswordException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="Current password is not correct",
+            status_code=400
+        )
+    pass
+
+class InvalidNewPasswordException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="New password is the same as the current password",
+            status_code=400
+        )
+    pass
