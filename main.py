@@ -6,6 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.exceptions import RequestValidationError
 from fastapi_pagination import add_pagination
 
+# Logger
+from log.logger import configure_logger
+
+configure_logger()
+
 # Exceptions
 from exceptions.base_exception import ApplicationException
 from handlers.exception_handlers import api_exception_handler, pydantic_request_validation_exception_handler
