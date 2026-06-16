@@ -12,10 +12,9 @@ from exceptions.auth_exceptions import InvalidCredentialsException, UserAlreadyE
 
 class AuthService:
 
-    def __init__(self, user_repository: UserRepository, password_service: PasswordService, jwt_service: JwtService):
+    def __init__(self, user_repository: UserRepository, password_service: PasswordService):
         self._repository = user_repository
         self._password_service = password_service
-        self._jwt_service = jwt_service
 
     def register(self, register_schema: RequestCreateUserSchema) -> ResponseCreateUserSchema:
         user = self._repository.get_by_email(register_schema.email)
@@ -42,7 +41,7 @@ class AuthService:
 
     def login(self, login_schema: RequestLoginSchema) -> ResponseLoginSchema:
         user = self._authenticate_user(login_schema.email, login_schema.password)
-        access_token, refresh_token = self._generate_tokens(user)
+        access_token, refresh_token = JwtService.generate_tokens(user.id)
         
         return ResponseLoginSchema(
             access_token=access_token,
@@ -52,7 +51,7 @@ class AuthService:
 
     def login_form_docs(self, form_data: OAuth2PasswordRequestForm) -> ResponseLoginSchema:
         user = self._authenticate_user(form_data.username, form_data.password)
-        access_token, refresh_token = self._generate_tokens(user)
+        access_token, refresh_token = JwtService.generate_tokens(user.id)
 
         return ResponseLoginSchema(
             access_token=access_token,
@@ -69,9 +68,3 @@ class AuthService:
         if not self._password_service.verify_password(password, hashed_stored_password):
             raise InvalidCredentialsException()
         return user
-
-
-    def _generate_tokens(self, user: User) -> tuple[str, str]:
-        access_token = self._jwt_service.create_access_token(user.id)
-        refresh_token = self._jwt_service.create_refresh_token(user.id)
-        return access_token, refresh_token

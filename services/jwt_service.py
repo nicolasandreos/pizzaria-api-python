@@ -32,3 +32,9 @@ class JwtService:
             algorithm=ALGORITHM
         )
         return refresh_token
+
+    @staticmethod
+    def generate_tokens(user_id: int) -> tuple[str, str]:
+        access_token = JwtService.create_access_token(user_id)
+        refresh_token = JwtService.create_refresh_token(user_id)
+        return access_token, refresh_token
