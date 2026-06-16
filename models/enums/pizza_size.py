@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Size(Enum):
+class PizzaSize(Enum):
     SMALL = "SMALL"
     MEDIUM = "MEDIUM"
     LARGE = "LARGE"
