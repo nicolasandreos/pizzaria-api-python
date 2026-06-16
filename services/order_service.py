@@ -106,7 +106,7 @@ class OrderService:
         if not order:
             raise OrderNotFoundException()
 
-        if order.user_id != user.id:
+        if order.user_id != user.id and not user.admin:
             raise NotAuthorizedToGetOrderException()
 
         return ResponseGetOrderSchema(
