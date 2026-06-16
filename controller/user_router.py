@@ -4,6 +4,7 @@ from dependencies.security_dependencies import verify_token
 from dependencies.user_dependencies import get_user_service
 from models.user import User
 from schemas.request.user.change_password_schema import RequestUserChangePasswordSchema
+from schemas.request.user.update_user_schema import RequestUpdateUserSchema
 from schemas.response.auth.user_schema import ResponseUserSchema
 
 user_router = APIRouter(prefix="/users", tags=["users"])
@@ -27,3 +28,7 @@ async def activate(user_id: int, user_service = Depends(get_user_service), admin
 @user_router.patch("/activate-admin/{user_id}", response_model=ResponseUserSchema)
 async def activate_admin(user_id: int, user_service = Depends(get_user_service), admin_user: User = Depends(get_admin_user)) -> ResponseUserSchema:
     return user_service.activate_admin(user_id)
+
+@user_router.patch("/update-profile", response_model=ResponseUserSchema)
+async def update_profile(update_user_schema: RequestUpdateUserSchema, user_service = Depends(get_user_service), user: User = Depends(verify_token)) -> ResponseUserSchema:
+    return user_service.update_profile(update_user_schema, user)

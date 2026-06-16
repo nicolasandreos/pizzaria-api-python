@@ -3,6 +3,7 @@ from exceptions.validation_exception import InvalidPasswordException
 from models.user import User
 from repositories.user_repository import UserRepository
 from schemas.request.user.change_password_schema import RequestUserChangePasswordSchema
+from schemas.request.user.update_user_schema import RequestUpdateUserSchema
 from schemas.response.auth.user_schema import ResponseUserSchema
 from services.password_service import PasswordService
 
@@ -105,3 +106,18 @@ class UserService:
             admin=user.admin,
             created_at=user.created_at
         )
+
+    
+    def update_profile(self, update_user_schema: RequestUpdateUserSchema, user: User) -> ResponseUserSchema:
+        user.name = update_user_schema.name
+        user.email = update_user_schema.email
+        self._repository.update(user)
+
+        return ResponseUserSchema(
+            name=user.name,
+            email=user.email,
+            active=user.active,
+            admin=user.admin,
+            created_at=user.created_at
+        )
+        
