@@ -12,40 +12,40 @@ from fastapi_pagination import Page, paginate
 product_router = APIRouter(prefix="/products", tags=["products"])
 
 @product_router.get("/all", response_model=list[ResponseProductSchema], status_code=status.HTTP_200_OK)
-def get_all_products(product_service: ProductService = Depends(get_product_service)):
+async def get_all_products(product_service: ProductService = Depends(get_product_service)):
     return product_service.get_all_products()
 
 
 @product_router.get("/all-paginated", response_model=Page[ResponseProductSchema], status_code=status.HTTP_200_OK)
-def get_all_products_paginated(product_service: ProductService = Depends(get_product_service)):
+async def get_all_products_paginated(product_service: ProductService = Depends(get_product_service)):
     return paginate(product_service.get_all_products())
 
 
 @product_router.post("/create", response_model=ResponseProductSchema, status_code=status.HTTP_201_CREATED)
-def create_product(product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+async def create_product(product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.create_product(product)
 
 
 @product_router.get("/best-selling-products", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
-def get_best_selling_product(product_service: ProductService = Depends(get_product_service), user: User = Depends(verify_token)):
+async def get_best_selling_product(product_service: ProductService = Depends(get_product_service), user: User = Depends(verify_token)):
     return product_service.get_best_selling_product()
 
 
 @product_router.get("/", response_model=list[ResponseProductSchema], status_code=status.HTTP_200_OK)
-def get_products_by_size(size: PizzaSize, product_service: ProductService = Depends(get_product_service), user: User = Depends(verify_token)):
-    return product_service.get_products_by_size(size)
+async def search_products(size: PizzaSize | None = None, name: str | None = None, product_service: ProductService = Depends(get_product_service), user: User = Depends(verify_token)):
+    return product_service.search_products(size, name)
 
 
 @product_router.put("/update/{id}", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
-def update_product(id: int, product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+async def update_product(id: int, product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.update_product(id, product)
 
 
 @product_router.patch("/{id}/disable", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
-def disable_product(id: int, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+async def disable_product(id: int, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.disable_product(id)
 
 
 @product_router.patch("/{id}/enable", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
-def enable_product(id: int, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+async def enable_product(id: int, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.enable_product(id)

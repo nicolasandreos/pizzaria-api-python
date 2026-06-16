@@ -19,8 +19,12 @@ class ProductService:
             active=product.active
         ) for product in products]
 
-    def get_products_by_size(self, size: PizzaSize) -> list[ResponseProductSchema]:
-        products = self._product_repository.get_products_by_size(size)
+    def search_products(self, size: PizzaSize | None = None, name: str | None = None) -> list[ResponseProductSchema]:
+        if size:
+            products = self._product_repository.get_products_by_size(size)
+        elif name:
+            products = self._product_repository.get_products_by_name(name)
+            
         return [ResponseProductSchema(
             name=product.name,
             description=product.description,

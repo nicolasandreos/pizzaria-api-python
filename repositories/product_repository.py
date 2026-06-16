@@ -55,3 +55,6 @@ class ProductRepository:
             .group_by(Product.id) \
             .order_by(func.sum(OrderProduct.quantity).desc()) \
             .first()
+
+    def get_products_by_name(self, name: str) -> list[Product]:
+        return self._session.query(Product).filter(Product.name.ilike(f"%{name}%")).all()
