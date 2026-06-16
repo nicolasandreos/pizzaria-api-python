@@ -34,3 +34,15 @@ class ProductRepository:
         product_db.size = product.size
         self._session.commit()
         return product_db
+
+    
+    def disable_product(self, product_db: Product) -> Product:
+        product_db.active = False
+        self._session.commit()
+        return product_db
+
+    
+    def enable_product(self, product_db: Product) -> Product:
+        product_db.active = True
+        self._session.commit()
+        return product_db

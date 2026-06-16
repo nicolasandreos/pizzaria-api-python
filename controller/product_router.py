@@ -28,6 +28,18 @@ def get_products_by_size(size: PizzaSize, product_service: ProductService = Depe
 def create_product(product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.create_product(product)
 
+
 @product_router.put("/update/{id}", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
 def update_product(id: int, product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.update_product(id, product)
+
+
+@product_router.patch("/{id}/disable", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
+def disable_product(id: int, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+    return product_service.disable_product(id)
+
+
+@product_router.patch("/{id}/enable", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
+def enable_product(id: int, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+    return product_service.enable_product(id)
+    

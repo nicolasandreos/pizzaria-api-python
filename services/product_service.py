@@ -1,3 +1,4 @@
+from exceptions.product_exception import ProductAlreadyDisabledException, ProductAlreadyEnabledException
 from exceptions.user_exceptions import ProductNotFoundException
 from repositories.product_repository import ProductRepository
 from schemas.request.product.product_schema import RequestProductSchema
@@ -51,4 +52,39 @@ class ProductService:
             price=updated_product.price,
             size=updated_product.size,
             active=updated_product.active
+        )
+
+
+    def disable_product(self, id: int) -> ResponseProductSchema:
+        product_db = self._product_repository.get_product_by_id(id)
+        if not product_db:
+            raise ProductNotFoundException()
+
+        if not product_db.active:
+            raise ProductAlreadyDisabledException()
+
+        disabled_product = self._product_repository.disable_product(product_db)
+        return ResponseProductSchema(
+            name=disabled_product.name,
+            description=disabled_product.description,
+            price=disabled_product.price,
+            size=disabled_product.size,
+            active=disabled_product.active
+        )
+
+    def enable_product(self, id: int) -> ResponseProductSchema:
+        product_db = self._product_repository.get_product_by_id(id)
+        if not product_db:
+            raise ProductNotFoundException()
+
+        if product_db.active:
+            raise ProductAlreadyEnabledException()
+
+        enabled_product = self._product_repository.enable_product(product_db)
+        return ResponseProductSchema(
+            name=enabled_product.name,
+            description=enabled_product.description,
+            price=enabled_product.price,
+            size=enabled_product.size,
+            active=enabled_product.active
         )
