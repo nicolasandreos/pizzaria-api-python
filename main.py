@@ -22,7 +22,7 @@ app = FastAPI()
 app.add_exception_handler(ApplicationException, api_exception_handler)
 app.add_exception_handler(RequestValidationError, pydantic_request_validation_exception_handler)
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-form-docs")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-form-docs", auto_error=False)
 
 from controller.auth_router import auth_router
 from controller.order_router import order_router
