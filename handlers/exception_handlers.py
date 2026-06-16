@@ -3,9 +3,12 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from schemas.response.error.error_schema import ErrorSchema
 from fastapi.exceptions import RequestValidationError
+import logging
 
+logger = logging.getLogger(__name__)
 
 async def api_exception_handler(request: Request, exc: ApplicationException) -> JSONResponse:
+    logger.error("%s (status_code=%s)", exc.message, exc.status_code)
     error_schema = ErrorSchema(
         message=exc.message,
         status_code=exc.status_code
@@ -16,6 +19,7 @@ async def api_exception_handler(request: Request, exc: ApplicationException) -> 
     )
 
 async def pydantic_request_validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    logger.warning("Request validation error: %s", exc.errors())
 
     status_code = 422
 
