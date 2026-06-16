@@ -16,7 +16,7 @@ class AuthService:
         self._repository = user_repository
         self._password_service = password_service
 
-    def register(self, register_schema: RequestCreateUserSchema) -> ResponseCreateUserSchema:
+    def register(self, register_schema: RequestCreateUserSchema, is_admin: bool = False) -> ResponseCreateUserSchema:
         user = self._repository.get_by_email(register_schema.email)
 
         if user:
@@ -27,7 +27,8 @@ class AuthService:
         new_user = User(
             name=register_schema.name,
             email=register_schema.email,
-            password=hashed_password
+            password=hashed_password,
+            admin=is_admin
         )
 
         created_user = self._repository.create(new_user)

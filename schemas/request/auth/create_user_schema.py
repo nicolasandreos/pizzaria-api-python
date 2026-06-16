@@ -7,8 +7,6 @@ class RequestCreateUserSchema(BaseModel):
     name: str = Field(min_length=2, max_length=255)
     email: str
     password: str
-    active: Optional[bool] = None
-    admin: Optional[bool] = None
 
     @field_validator("email", mode="before")
     @classmethod
