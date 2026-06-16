@@ -1,4 +1,6 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
+from models.order_product import OrderProduct
 from models.product import Product
 from models.product import PizzaSize
 from schemas.request.product.product_schema import RequestProductSchema
@@ -46,3 +48,10 @@ class ProductRepository:
         product_db.active = True
         self._session.commit()
         return product_db
+
+    def get_best_selling_product(self) -> Product:
+        return self._session.query(Product) \
+            .join(OrderProduct, Product.id == OrderProduct.product_id) \
+            .group_by(Product.id) \
+            .order_by(func.sum(OrderProduct.quantity).desc()) \
+            .first()

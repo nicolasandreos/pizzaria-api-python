@@ -88,3 +88,13 @@ class ProductService:
             size=enabled_product.size,
             active=enabled_product.active
         )
+
+    def get_best_selling_product(self) -> ResponseProductSchema:
+        product = self._product_repository.get_best_selling_product()
+        return ResponseProductSchema(
+            name=product.name,
+            description=product.description,
+            price=product.price,
+            size=product.size,
+            active=product.active
+        )
