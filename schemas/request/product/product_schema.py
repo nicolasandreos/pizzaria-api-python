@@ -6,3 +6,4 @@ class RequestProductSchema(BaseModel):
     description: str = Field(min_length=3, max_length=100)
     price: float = Field(gt=0)
     size: PizzaSize
+    active: bool = Field(default=True)

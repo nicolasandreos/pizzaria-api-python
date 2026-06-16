@@ -6,3 +6,4 @@ class ResponseProductSchema(BaseModel):
     description: str
     price: float
     size: PizzaSize
+    active: bool

@@ -14,7 +14,8 @@ class ProductService:
             name=product.name,
             description=product.description,
             price=product.price,
-            size=product.size
+            size=product.size,
+            active=product.active
         ) for product in products]
 
     def get_products_by_size(self, size: PizzaSize) -> list[ResponseProductSchema]:
@@ -23,7 +24,8 @@ class ProductService:
             name=product.name,
             description=product.description,
             price=product.price,
-            size=product.size
+            size=product.size,
+            active=product.active
         ) for product in products]
 
     def create_product(self, product: RequestProductSchema) -> ResponseProductSchema:
@@ -32,7 +34,8 @@ class ProductService:
             name=product.name,
             description=product.description,
             price=product.price,
-            size=product.size
+            size=product.size,
+            active=product.active
         )
 
     def update_product(self, id: int, product: RequestProductSchema) -> ResponseProductSchema:
@@ -46,6 +49,6 @@ class ProductService:
             name=updated_product.name,
             description=updated_product.description,
             price=updated_product.price,
-            size=updated_product.size
+            size=updated_product.size,
+            active=updated_product.active
         )
-        

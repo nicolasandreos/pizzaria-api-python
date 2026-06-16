@@ -1,5 +1,5 @@
 from database.base import Base
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, Boolean
 from .enums.pizza_size import PizzaSize
 from sqlalchemy.types import Enum as sqlEnum
 
@@ -11,9 +11,11 @@ class Product(Base):
     price = Column("price", Float, nullable=False)
     description = Column("description", String(255), nullable=False)
     size = Column("size", sqlEnum(PizzaSize), nullable=False)
+    active = Column("active", Boolean, nullable=False, default=True)
 
-    def __init__(self, name: str, price: float, description: str, size: PizzaSize) -> None:
+    def __init__(self, name: str, price: float, description: str, size: PizzaSize, active: bool = True) -> None:
         self.name = name
         self.price = price
         self.description = description
         self.size = size
+        self.active = active
