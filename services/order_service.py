@@ -4,13 +4,14 @@ from models import User, Order, OrderProduct
 from models.enums.order_status import OrderStatus
 from exceptions.auth_exceptions import UserNotActiveException
 from exceptions.product_exception import ProductNotFoundException
-from exceptions.order_exception import NotAuthorizedToGetOrderException, OrderNotCreatedException, OrderNotFoundException, OrderNotAuthorizedToCancelException, OrderNotValidToCancelException
+from exceptions.order_exception import NotAuthorizedToGetOrderException, OrderNotCreatedException, OrderNotFoundException, OrderNotAuthorizedToCancelException, OrderNotValidToCancelException, OrderNotValidToStartException
 from exceptions.order_product import OrderProductNotCreatedException
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
 from schemas.response.order.cancel_schema import ResponseCancelOrderSchema
 from schemas.response.order.get_all_schema import ResponseGetAllOrdersSchema, OrderSchema
 from repositories.product_repository import ProductRepository
 from schemas.response.order.get_order_schema import OrderItemResponseSchema, ResponseGetOrderSchema
+from schemas.response.order.start_order_schema import ResponseStartOrderSchema
 
 class OrderService:
 
@@ -111,7 +112,7 @@ class OrderService:
 
         return ResponseGetOrderSchema(
             order_id=order_id,
-            user_id=user.id,
+            user_id=order.user_id,
             order_price=order.price,
             order_status=order.status,
             items=[OrderItemResponseSchema(
@@ -120,3 +121,27 @@ class OrderService:
                 unit_price=order_product.unit_price
             ) for order_product in order.order_products]
         )
+
+    def start_order(self, order_id: int) -> ResponseStartOrderSchema:
+        order = self._repository.get_order_by_id(order_id)
+        if not order:
+            raise OrderNotFoundException()
+
+        if not OrderStatus.is_enable_to_change_status(order.status, OrderStatus.IN_PROGRESS):
+            raise OrderNotValidToStartException()
+
+        order.status = OrderStatus.IN_PROGRESS
+        self._repository.update_order(order)
+
+        return ResponseStartOrderSchema(
+            order_id=order.id,
+            user_id=order.user_id,
+            order_price=order.price,
+            items=[OrderItemResponseSchema(
+                product_name=order_product.product.name,
+                quantity=order_product.quantity,
+                unit_price=order_product.unit_price
+            ) for order_product in order.order_products],
+            order_status=order.status
+        )
+        

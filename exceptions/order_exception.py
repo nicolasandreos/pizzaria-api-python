@@ -35,4 +35,9 @@ class NotAuthorizedToGetOrderException(ApplicationException):
             status_code=403
         )
 
-        
+class OrderNotValidToStartException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="Order is not valid to start",
+            status_code=400
+        )
