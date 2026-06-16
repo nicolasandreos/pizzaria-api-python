@@ -1,4 +1,4 @@
-from exceptions.user_exceptions import InvalidCurrentPasswordException, InvalidNewPasswordException
+from exceptions.user_exceptions import InvalidCurrentPasswordException, InvalidNewPasswordException, UserAlreadyActiveException, UserAlreadyDeactivatedException, UserNotFoundException
 from exceptions.validation_exception import InvalidPasswordException
 from models.user import User
 from repositories.user_repository import UserRepository
@@ -36,6 +36,46 @@ class UserService:
 
         new_password = PasswordService.hash_password(change_password_schema.new_password)
         user.password = new_password
+        self._repository.update(user)
+
+        return ResponseUserSchema(
+            name=user.name,
+            email=user.email,
+            active=user.active,
+            admin=user.admin,
+            created_at=user.created_at
+        )
+
+
+    def deactivate(self, user_id: int) -> ResponseUserSchema:
+        user = self._repository.get_by_id(user_id)
+        if not user:
+            raise UserNotFoundException()
+
+        if not user.active:
+            raise UserAlreadyDeactivatedException()
+
+        user.active = False
+        self._repository.update(user)
+
+        return ResponseUserSchema(
+            name=user.name,
+            email=user.email,
+            active=user.active,
+            admin=user.admin,
+            created_at=user.created_at
+        )
+
+
+    def activate(self, user_id: int) -> ResponseUserSchema:
+        user = self._repository.get_by_id(user_id)
+        if not user:
+            raise UserNotFoundException()
+
+        if user.active:
+            raise UserAlreadyActiveException()
+
+        user.active = True
         self._repository.update(user)
 
         return ResponseUserSchema(

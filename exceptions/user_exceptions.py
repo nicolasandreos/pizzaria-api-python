@@ -31,3 +31,19 @@ class InvalidNewPasswordException(ApplicationException):
             status_code=400
         )
     pass
+
+class UserAlreadyDeactivatedException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="User is already deactivated",
+            status_code=400
+        )
+    pass
+
+class UserAlreadyActiveException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="User is already active",
+            status_code=400
+        )
+    pass

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from dependencies.admin_dependencies import get_admin_user
 from dependencies.security_dependencies import verify_token
 from dependencies.user_dependencies import get_user_service
 from models.user import User
@@ -14,3 +15,13 @@ async def get_me(user_service = Depends(get_user_service), user: User = Depends(
 @user_router.patch("/change-password", response_model=ResponseUserSchema)
 async def change_password(change_password_schema: RequestUserChangePasswordSchema, user_service = Depends(get_user_service), user: User = Depends(verify_token)) -> ResponseUserSchema:
     return user_service.change_password(change_password_schema, user)
+
+@user_router.patch("/deactivate/{user_id}", response_model=ResponseUserSchema)
+async def deactivate(user_id: int, user_service = Depends(get_user_service), admin_user: User = Depends(get_admin_user)) -> ResponseUserSchema:
+    return user_service.deactivate(user_id)
+
+@user_router.patch("/activate/{user_id}", response_model=ResponseUserSchema)
+async def activate(user_id: int, user_service = Depends(get_user_service), admin_user: User = Depends(get_admin_user)) -> ResponseUserSchema:
+    return user_service.activate(user_id)
+
+    
