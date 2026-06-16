@@ -6,9 +6,6 @@ class OrderRepository:
     def __init__(self, session: Session) -> None:
         self._session = session
 
-    def get_product_by_id(self, product_id: int) -> Product | None:
-        return self._session.query(Product).filter(Product.id == product_id).first()
-
     def create_order(self, order: Order) -> Order:
         self._session.add(order)
         self._session.flush()
@@ -18,6 +15,9 @@ class OrderRepository:
         self._session.add(order_product)
         self._session.flush()
         return order_product
+
+    def commit(self) -> None:
+        self._session.commit()
 
     def get_order_by_id(self, order_id: int) -> Order | None:
         return self._session.query(Order).filter(Order.id == order_id).first()

@@ -1,17 +1,16 @@
 from pydantic import BaseModel
-from typing import List
-
-class OrderItemResponseSchema(BaseModel):
+class OrderItemCreateSchema(BaseModel):
     product_id: int
     quantity: int
-    unit_price: float
-
+    
+    class Config:
+        from_attributes = True
 class ResponseCreateOrderSchema(BaseModel):
     message: str
     order_id: int
     user_id: int
     order_price: float
-    items: List[OrderItemResponseSchema]
+    items: list[OrderItemCreateSchema]
 
     class Config:
         from_attributes = True

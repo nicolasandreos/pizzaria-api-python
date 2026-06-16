@@ -27,3 +27,12 @@ class OrderNotValidToCancelException(ApplicationException):
             message="Order is not valid to cancel",
             status_code=400
         )
+
+class NotAuthorizedToGetOrderException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="You are not authorized to get this order",
+            status_code=403
+        )
+
+        

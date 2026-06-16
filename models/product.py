@@ -1,3 +1,4 @@
+from sqlalchemy.orm import relationship
 from database.base import Base
 from sqlalchemy import Column, Integer, String, Float, Boolean
 from .enums.pizza_size import PizzaSize
@@ -12,6 +13,8 @@ class Product(Base):
     description = Column("description", String(255), nullable=False)
     size = Column("size", sqlEnum(PizzaSize), nullable=False)
     active = Column("active", Boolean, nullable=False, default=True)
+
+    order_products = relationship("OrderProduct", back_populates="product")
 
     def __init__(self, name: str, price: float, description: str, size: PizzaSize, active: bool = True) -> None:
         self.name = name

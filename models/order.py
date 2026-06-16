@@ -1,3 +1,4 @@
+from sqlalchemy.orm import relationship
 from database.base import Base
 from sqlalchemy import Column, Integer, ForeignKey, Float
 from .enums.order_status import OrderStatus
@@ -10,6 +11,7 @@ class Order(Base):
     user_id = Column("user_id", ForeignKey("users.id"), nullable=False)
     price = Column("price", Float, nullable=False)
     status = Column("status", sqlEnum(OrderStatus), nullable=False, default=OrderStatus.PENDING)
+    order_products = relationship("OrderProduct", back_populates="order", cascade="all, delete-orphan")
 
     def __init__(self, user_id: int, price: float, status: str = "PENDING") -> None:
         self.user_id = user_id
