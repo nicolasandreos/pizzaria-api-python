@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.product import Product
+from models.product import PizzaSize
 
 class ProductRepository:
     def __init__(self, session: Session):
@@ -7,3 +8,6 @@ class ProductRepository:
 
     def get_all_products(self) -> list[Product]:
         return self._session.query(Product).all()
+
+    def get_products_by_size(self, size: PizzaSize) -> list[Product]:
+        return self._session.query(Product).filter(Product.size == size).all()
