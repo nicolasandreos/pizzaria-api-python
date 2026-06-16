@@ -29,9 +29,11 @@ oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login-form-docs", auto_error
 from controller.auth_router import auth_router
 from controller.order_router import order_router
 from controller.product_router import product_router
+from controller.user_router import user_router
 
 app.include_router(auth_router)
 app.include_router(order_router)
 app.include_router(product_router)
+app.include_router(user_router)
 
 # Para rodar a aplicação, use o comando: uvicorn main:app --reload

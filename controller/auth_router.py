@@ -15,7 +15,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from schemas.response.auth.create_user_schema import ResponseCreateUserSchema
 
 # services
-from schemas.response.auth.user_schema import ResponseUserSchema
 from services.auth_service import AuthService
 from services.jwt_service import JwtService
 
@@ -39,14 +38,3 @@ async def create_account(user_schema: RequestCreateUserSchema, auth_service: Aut
 @auth_router.post("/refresh-access-token", response_model=ResponseAccessTokenSchema)
 async def refresh_access_token(user: User = Depends(verify_token), jwt_service: JwtService = Depends(get_jwt_service)) -> ResponseAccessTokenSchema:
     return jwt_service.create_access_token(user.id)
-
-
-@auth_router.get("/me", response_model=ResponseUserSchema)
-async def get_me(user: User = Depends(verify_token)) -> ResponseUserSchema:
-    return ResponseUserSchema(
-        name=user.name,
-        email=user.email,
-        active=user.active,
-        admin=user.admin,
-        created_at=user.created_at
-    )
