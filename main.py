@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.exceptions import RequestValidationError
+from fastapi_pagination import add_pagination
 
 # Exceptions
 from exceptions.base_exception import ApplicationException
@@ -17,6 +18,7 @@ ALGORITHM = os.getenv("ALGORITHM")
 JWT_TOKEN = os.getenv("JWT_TOKEN")
 
 app = FastAPI()
+add_pagination(app)
 
 # Exception handlers
 app.add_exception_handler(ApplicationException, api_exception_handler)
