@@ -7,8 +7,12 @@ from main import JWT_TOKEN, ALGORITHM, oauth2_schema
 from datetime import datetime, timezone
 from exceptions.auth_exceptions import InvalidRefreshTokenException
 from exceptions.user_exceptions import UserNotFoundException
+from exceptions.auth_exceptions import TokenNotFoundException
 
-def verify_token(token: str = Depends(oauth2_schema), session: Session = Depends(get_session)):
+def verify_token(token: str | None = Depends(oauth2_schema), session: Session = Depends(get_session)) -> User | None:
+
+    if not token:
+        raise TokenNotFoundException()
 
     try:
         payload =jwt.decode(token, JWT_TOKEN, algorithms=[ALGORITHM])

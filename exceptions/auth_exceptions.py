@@ -36,3 +36,10 @@ class UserIsNotAdminException(ApplicationException):
             message="User is not admin and is forbidden to access this resource",
             status_code=403
         )
+
+class TokenNotFoundException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="Token not found",
+            status_code=401
+        )
