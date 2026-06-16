@@ -1,3 +1,4 @@
+from exceptions.user_exceptions import ProductNotFoundException
 from repositories.product_repository import ProductRepository
 from schemas.request.product.product_schema import RequestProductSchema
 from schemas.response.product.product_schema import ResponseProductSchema
@@ -33,3 +34,18 @@ class ProductService:
             price=product.price,
             size=product.size
         )
+
+    def update_product(self, id: int, product: RequestProductSchema) -> ResponseProductSchema:
+        product_db = self._product_repository.get_product_by_id(id)
+        if not product_db:
+            raise ProductNotFoundException()
+
+        updated_product = self._product_repository.update_product(product_db, product)
+
+        return ResponseProductSchema(
+            name=updated_product.name,
+            description=updated_product.description,
+            price=updated_product.price,
+            size=updated_product.size
+        )
+        

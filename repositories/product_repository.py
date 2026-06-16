@@ -7,6 +7,9 @@ class ProductRepository:
     def __init__(self, session: Session):
         self._session = session
 
+    def get_product_by_id(self, id: int) -> Product:
+        return self._session.query(Product).filter(Product.id == id).first()
+
     def get_all_products(self) -> list[Product]:
         return self._session.query(Product).all()
 
@@ -23,3 +26,11 @@ class ProductRepository:
         self._session.add(new_product)
         self._session.commit()
         return new_product
+
+    def update_product(self, product_db: Product, product: RequestProductSchema) -> Product:
+        product_db.name = product.name
+        product_db.description = product.description
+        product_db.price = product.price
+        product_db.size = product.size
+        self._session.commit()
+        return product_db

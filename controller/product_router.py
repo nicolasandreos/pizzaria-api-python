@@ -27,3 +27,7 @@ def get_products_by_size(size: PizzaSize, product_service: ProductService = Depe
 @product_router.post("/create", response_model=ResponseProductSchema, status_code=status.HTTP_201_CREATED)
 def create_product(product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
     return product_service.create_product(product)
+
+@product_router.put("/update/{id}", response_model=ResponseProductSchema, status_code=status.HTTP_200_OK)
+def update_product(id: int, product: RequestProductSchema, product_service: ProductService = Depends(get_product_service), admin_user: User = Depends(get_admin_user)):
+    return product_service.update_product(id, product)
