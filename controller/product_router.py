@@ -31,8 +31,8 @@ def get_best_selling_product(product_service: ProductService = Depends(get_produ
     return product_service.get_best_selling_product()
 
 
-@product_router.get("/{size}", response_model=list[ResponseProductSchema], status_code=status.HTTP_200_OK)
-def get_products_by_size(size: PizzaSize, product_service: ProductService = Depends(get_product_service)):
+@product_router.get("/", response_model=list[ResponseProductSchema], status_code=status.HTTP_200_OK)
+def get_products_by_size(size: PizzaSize, product_service: ProductService = Depends(get_product_service), user: User = Depends(verify_token)):
     return product_service.get_products_by_size(size)
 
 
