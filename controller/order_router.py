@@ -6,7 +6,6 @@ from schemas.request.order.create_schema import RequestCreateOrderSchema
 from schemas.response.order.get_order_schema import ResponseGetOrderSchema
 from services.order_service import OrderService
 from schemas.response.order.create_schema import ResponseCreateOrderSchema
-from schemas.response.order.cancel_schema import ResponseCancelOrderSchema
 from schemas.response.order.get_all_schema import ResponseGetAllOrdersSchema
 from models import User
 
@@ -15,12 +14,6 @@ order_router = APIRouter(prefix="/order", tags=["order"], dependencies=[Depends(
 @order_router.post("/create", response_model=ResponseCreateOrderSchema)
 async def create_order(order_schema: RequestCreateOrderSchema, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
     return order_service.create_order(order_schema, user)
-
-
-@order_router.post("/cancel/{order_id}", response_model=ResponseCancelOrderSchema)
-async def cancel_order(order_id: int, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
-    return order_service.cancel_order(order_id, user)
-
 
 @order_router.get("/all", response_model=ResponseGetAllOrdersSchema)
 async def get_all_orders(order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
@@ -40,3 +33,7 @@ async def start_order(order_id: int, order_service: OrderService = Depends(get_o
 @order_router.patch("/{order_id}/complete", response_model=ResponseGetOrderSchema)
 async def complete_order(order_id: int, order_service: OrderService = Depends(get_order_service), admin_user: User = Depends(get_admin_user)):
     return order_service.complete_order(order_id)
+
+@order_router.patch("/{order_id}/cancel", response_model=ResponseGetOrderSchema)
+async def cancel_order(order_id: int, order_service: OrderService = Depends(get_order_service), user: User = Depends(verify_token)):
+    return order_service.cancel_order(order_id, user)
