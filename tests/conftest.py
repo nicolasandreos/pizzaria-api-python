@@ -8,7 +8,6 @@ from tests.db_session import TestingSessionLocal, engine
 from database.base import Base
 from dependencies.session_dependencies import get_session
 from models import *
-from services.password_service import PasswordService
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
