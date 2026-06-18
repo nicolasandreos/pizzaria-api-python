@@ -43,4 +43,4 @@ async def create_admin(user_schema: RequestCreateUserSchema, auth_service: AuthS
 
 @auth_router.post("/refresh-access-token", response_model=ResponseAccessTokenSchema, status_code=status.HTTP_200_OK)
 async def refresh_access_token(user: User = Depends(verify_token), jwt_service: JwtService = Depends(get_jwt_service)) -> ResponseAccessTokenSchema:
-    return jwt_service.create_access_token(user.id)
+    return ResponseAccessTokenSchema(access_token=jwt_service.create_access_token(user.id), token_type="Bearer")
