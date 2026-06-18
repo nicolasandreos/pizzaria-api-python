@@ -3,7 +3,8 @@ from models import User
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from jose import jwt, JWTError
-from main import JWT_TOKEN, ALGORITHM, oauth2_schema
+from config.jwt_config import ALGORITHM, JWT_TOKEN
+from main import oauth2_schema
 from datetime import datetime, timezone
 from exceptions.auth_exceptions import InvalidRefreshTokenException
 from exceptions.user_exceptions import UserNotFoundException

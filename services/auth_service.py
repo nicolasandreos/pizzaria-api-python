@@ -17,9 +17,10 @@ logger = logging.getLogger(__name__)
 
 class AuthService:
 
-    def __init__(self, user_repository: UserRepository, password_service: PasswordService):
+    def __init__(self, user_repository: UserRepository, password_service: PasswordService, jwt_service: JwtService):
         self._repository = user_repository
         self._password_service = password_service
+        self._jwt_service = jwt_service
 
     def register(self, register_schema: RequestCreateUserSchema, is_admin: bool = False) -> ResponseCreateUserSchema:
         logger.info(
@@ -63,7 +64,7 @@ class AuthService:
     def login(self, login_schema: RequestLoginSchema) -> ResponseLoginSchema:
         logger.info("Login attempt (email=%s)", login_schema.email)
         user = self._authenticate_user(login_schema.email, login_schema.password)
-        access_token, refresh_token = JwtService.generate_tokens(user.id)
+        access_token, refresh_token = self._jwt_service.generate_tokens(user.id)
         logger.info("Login successful (user_id=%s, email=%s)", user.id, user.email)
 
         return ResponseLoginSchema(
@@ -75,7 +76,7 @@ class AuthService:
     def login_form_docs(self, form_data: OAuth2PasswordRequestForm) -> ResponseLoginSchema:
         logger.info("OAuth2 form login attempt (username=%s)", form_data.username)
         user = self._authenticate_user(form_data.username, form_data.password)
-        access_token, refresh_token = JwtService.generate_tokens(user.id)
+        access_token, refresh_token = self._jwt_service.generate_tokens(user.id)
         logger.info("OAuth2 form login successful (user_id=%s, email=%s)", user.id, user.email)
 
         return ResponseLoginSchema(

@@ -1,5 +1,3 @@
-import os
-
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
@@ -17,10 +15,12 @@ from handlers.exception_handlers import api_exception_handler, pydantic_request_
 
 load_dotenv()
 
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) # minutes
-REFRESH_TOKEN_EXPIRE_MINUTES = int(os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")) # days
-ALGORITHM = os.getenv("ALGORITHM")
-JWT_TOKEN = os.getenv("JWT_TOKEN")
+from config.jwt_config import (  # noqa: E402
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    ALGORITHM,
+    JWT_TOKEN,
+    REFRESH_TOKEN_EXPIRE_MINUTES,
+)
 
 app = FastAPI()
 add_pagination(app)

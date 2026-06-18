@@ -1,5 +1,5 @@
 from jose import jwt
-from main import JWT_TOKEN, ALGORITHM
+from config.jwt_config import ALGORITHM, JWT_TOKEN
 from services.jwt_service import JwtService
 from datetime import datetime, timezone
 

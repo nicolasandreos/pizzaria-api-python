@@ -1,7 +1,12 @@
 import logging
 from datetime import datetime, timedelta, timezone
 from jose import jwt
-from main import ACCESS_TOKEN_EXPIRE_MINUTES, JWT_TOKEN, ALGORITHM, REFRESH_TOKEN_EXPIRE_MINUTES
+from config.jwt_config import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    ALGORITHM,
+    JWT_TOKEN,
+    REFRESH_TOKEN_EXPIRE_MINUTES,
+)
 
 logger = logging.getLogger(__name__)
 
