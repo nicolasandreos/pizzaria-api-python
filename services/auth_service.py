@@ -9,7 +9,7 @@ from services.password_service import PasswordService
 from models import User
 from services.jwt_service import JwtService
 from fastapi.security import OAuth2PasswordRequestForm
-from exceptions.user_exceptions import UserNotFoundException
+from exceptions.user_exceptions import UserInactiveException, UserNotFoundException
 from exceptions.auth_exceptions import InvalidCredentialsException, UserAlreadyExistsException
 
 logger = logging.getLogger(__name__)
@@ -64,6 +64,9 @@ class AuthService:
     def login(self, login_schema: RequestLoginSchema) -> ResponseLoginSchema:
         logger.info("Login attempt (email=%s)", login_schema.email)
         user = self._authenticate_user(login_schema.email, login_schema.password)
+        if not user.active:
+            logger.warning("Login failed: user is inactive (user_id=%s, email=%s)", user.id, user.email)
+            raise UserInactiveException()
         access_token, refresh_token = self._jwt_service.generate_tokens(user.id)
         logger.info("Login successful (user_id=%s, email=%s)", user.id, user.email)
 

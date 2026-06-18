@@ -55,3 +55,11 @@ class UserAlreadyAdminException(ApplicationException):
             status_code=400
         )
     pass
+
+class UserInactiveException(ApplicationException):
+    def __init__(self):
+        super().__init__(
+            message="User is inactive",
+            status_code=401
+        )
+    pass
