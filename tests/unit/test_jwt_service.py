@@ -1,5 +1,5 @@
 from jose import jwt
-from config.jwt_config import ALGORITHM, JWT_TOKEN
+from settings import settings
 from services.jwt_service import JwtService
 from datetime import datetime, timezone
 
@@ -20,7 +20,7 @@ def test_generate_refresh_token():
 def test_access_token_should_store_valid_payload():
     test_user_id = 1
     access_token = JwtService.create_access_token(test_user_id)
-    payload = jwt.decode(access_token, JWT_TOKEN, algorithms=[ALGORITHM])
+    payload = jwt.decode(access_token, settings.JWT_TOKEN, algorithms=[settings.ALGORITHM])
     assert payload is not None
     assert payload.get("sub") == str(test_user_id)
     assert payload.get("exp") is not None
@@ -29,7 +29,7 @@ def test_access_token_should_store_valid_payload():
 def test_refresh_token_should_store_valid_payload():
     test_user_id = 1
     refresh_token = JwtService.create_refresh_token(test_user_id)
-    payload = jwt.decode(refresh_token, JWT_TOKEN, algorithms=[ALGORITHM])
+    payload = jwt.decode(refresh_token, settings.JWT_TOKEN, algorithms=[settings.ALGORITHM])
     assert payload is not None
     assert payload.get("sub") == str(test_user_id)
     assert payload.get("exp") is not None
@@ -38,7 +38,7 @@ def test_refresh_token_should_store_valid_payload():
 def test_access_token_expiration_date():
     test_user_id = 1
     access_token = JwtService.create_access_token(test_user_id)
-    payload = jwt.decode(access_token, JWT_TOKEN, algorithms=[ALGORITHM])
+    payload = jwt.decode(access_token, settings.JWT_TOKEN, algorithms=[settings.ALGORITHM])
     expiration_date = datetime.fromtimestamp(payload.get("exp"), timezone.utc)
     now = datetime.now(timezone.utc)
 
@@ -50,7 +50,7 @@ def test_access_token_expiration_date():
 def test_refresh_token_expiration_date():
     test_user_id = 1
     refresh_token = JwtService.create_refresh_token(test_user_id)
-    payload = jwt.decode(refresh_token, JWT_TOKEN, algorithms=[ALGORITHM])
+    payload = jwt.decode(refresh_token, settings.JWT_TOKEN, algorithms=[settings.ALGORITHM])
     expiration_date = datetime.fromtimestamp(payload.get("exp"), timezone.utc)
     now = datetime.now(timezone.utc)
 

@@ -1,12 +1,7 @@
 import logging
 from datetime import datetime, timedelta, timezone
 from jose import jwt
-from config.jwt_config import (
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    ALGORITHM,
-    JWT_TOKEN,
-    REFRESH_TOKEN_EXPIRE_MINUTES,
-)
+from settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -15,15 +10,15 @@ class JwtService:
 
     @staticmethod
     def create_access_token(user_id: int):
-        expiration_date = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expiration_date = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         payload ={
             "sub": str(user_id),
             "exp": expiration_date
         }
         access_token = jwt.encode(
             payload,
-            JWT_TOKEN,
-            algorithm=ALGORITHM
+            settings.JWT_TOKEN,
+            algorithm=settings.ALGORITHM
         )
         logger.debug(
             "Access token issued (user_id=%s, expires_at=%s)",
@@ -35,15 +30,15 @@ class JwtService:
 
     @staticmethod
     def create_refresh_token(user_id: int):
-        expiration_date = datetime.now(timezone.utc) + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
+        expiration_date = datetime.now(timezone.utc) + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
         payload ={
             "sub": str(user_id),
             "exp": expiration_date
         }
         refresh_token = jwt.encode(
             payload,
-            JWT_TOKEN,
-            algorithm=ALGORITHM
+            settings.JWT_TOKEN,
+            algorithm=settings.ALGORITHM
         )
         logger.debug(
             "Refresh token issued (user_id=%s, expires_at=%s)",

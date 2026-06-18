@@ -3,7 +3,7 @@ from models import User
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from jose import jwt, JWTError
-from config.jwt_config import ALGORITHM, JWT_TOKEN
+from settings import settings
 from main import oauth2_schema
 from datetime import datetime, timezone
 from exceptions.auth_exceptions import InvalidRefreshTokenException
@@ -16,7 +16,7 @@ def verify_token(token: str | None = Depends(oauth2_schema), session: Session = 
         raise TokenNotFoundException()
 
     try:
-        payload =jwt.decode(token, JWT_TOKEN, algorithms=[ALGORITHM])
+        payload =jwt.decode(token, settings.JWT_TOKEN, algorithms=[settings.ALGORITHM])
         user_id = int(payload.get("sub"))
         expiration_date = payload.get("exp")
     except JWTError:
