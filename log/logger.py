@@ -9,7 +9,7 @@ def configure_logger():
             datefmt="%Y-%m-%d %H:%M:%S",
             log_colors={
                 "DEBUG": "white",
-                "INFO": "white",
+                "INFO": "green",
                 "WARNING": "yellow",
                 "ERROR": "red",
                 "CRITICAL": "red,bg_white"

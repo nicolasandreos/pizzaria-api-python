@@ -1,15 +1,22 @@
 from dotenv import load_dotenv
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv(".env")
-environment = os.getenv("ENVIRONMENT", "development")
 
-if environment == "development":
+environment = os.getenv("ENVIRONMENT", "DEVELOPMENT").upper()
+
+if environment == "DEVELOPMENT":
     load_dotenv(".env.development")
-elif environment == "production":
+    logger.info(f"Environment loaded: {environment}!")
+elif environment == "PRODUCTION":
     load_dotenv(".env.production")
+    logger.info(f"Environment loaded: {environment}!")
 else:
-    raise ValueError(f"Invalid environment: {environment}")
+    logger.error(f"Invalid environment: {environment}!")
+    raise ValueError(f"Invalid environment: {environment}!")
 
 
 class Settings:
