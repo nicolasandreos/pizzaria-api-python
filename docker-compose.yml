@@ -3,6 +3,7 @@ version: "3.9"
 services:
   app:
     build: .
+    image: pizzaria-api:local
     container_name: pizzaria-api
 
     ports:
