@@ -1,11 +1,12 @@
 #!/bin/sh
 
-echo "Waiting for database to be ready..."
-while ! nc -z mysql 3306; do
-    sleep 1
-done
-
-echo "Database ready!"
+if [ "$ENVIRONMENT" = "development" ]; then
+    echo "Waiting for database to be ready..."
+    while ! nc -z mysql 3306; do
+        sleep 1
+    done
+    echo "Database ready!"
+fi
 
 if [ "$RUN_DATABASE_MIGRATIONS" = "true" ]; then
     echo "Applying database migrations..."
