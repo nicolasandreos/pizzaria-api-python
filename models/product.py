@@ -13,12 +13,14 @@ class Product(Base):
     description = Column("description", String(255), nullable=False)
     size = Column("size", sqlEnum(PizzaSize), nullable=False)
     active = Column("active", Boolean, nullable=False, default=True)
+    color = Column("color", String(255), default=None)
 
     order_products = relationship("OrderProduct", back_populates="product")
 
-    def __init__(self, name: str, price: float, description: str, size: PizzaSize, active: bool = True) -> None:
+    def __init__(self, name: str, price: float, description: str, size: PizzaSize, active: bool = True, color: str = None) -> None:
         self.name = name
         self.price = price
         self.description = description
         self.size = size
         self.active = active
+        self.color = color
