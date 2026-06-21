@@ -26,6 +26,7 @@ class Settings:
     ALGORITHM = os.getenv("ALGORITHM")
     ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
     REFRESH_TOKEN_EXPIRE_MINUTES = int(os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES", "10080"))
+    RUN_DATABASE_MIGRATIONS = os.getenv("RUN_DATABASE_MIGRATIONS", "False").lower() == "true"
 
 
 settings = Settings()
