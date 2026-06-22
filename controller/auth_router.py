@@ -21,10 +21,6 @@ from services.jwt_service import JwtService
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
-@auth_router.post("/test-github-actions", status_code=status.HTTP_200_OK)
-async def test_github_actions():
-    return {"message": "Hello, Github Actions!"}
-
 @auth_router.post("/login", response_model=ResponseLoginSchema, status_code=status.HTTP_200_OK)
 async def login(login_schema: RequestLoginSchema, auth_service: AuthService = Depends(get_auth_service)) -> ResponseLoginSchema:
     return auth_service.login(login_schema)
