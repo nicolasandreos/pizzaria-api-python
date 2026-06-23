@@ -1,0 +1,35 @@
+name: Tests CI Pipeline
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: sqlite:///./test.db
+      JWT_TOKEN: test
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_MINUTES: 10080
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute tests
+        run: pytest
+
+    
