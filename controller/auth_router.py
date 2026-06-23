@@ -10,6 +10,7 @@ from dependencies.auth_dependencies import get_auth_service
 # schemas
 from schemas.request.auth.create_user_schema import RequestCreateUserSchema
 from schemas.request.auth.login_user_schema import RequestLoginSchema
+from schemas.response.auth.get_user_schema import ResponseGetUserSchema
 from schemas.response.auth.login_schema import ResponseLoginSchema
 from schemas.response.auth.access_token_schema import ResponseAccessTokenSchema
 from fastapi.security import OAuth2PasswordRequestForm
@@ -26,6 +27,11 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 async def login(login_schema: RequestLoginSchema, auth_service: AuthService = Depends(get_auth_service)) -> ResponseLoginSchema:
     return auth_service.login(login_schema)
 
+
+@auth_router.get("/me", response_model=ResponseGetUserSchema, status_code=status.HTTP_200_OK)
+async def get_user(user: User = Depends(verify_token)) -> ResponseGetUserSchema:
+    return ResponseGetUserSchema(name=user.name, email=user.email, created_at=user.created_at, active=user.active, admin=user.admin)
+    
 
 @auth_router.post("/login-form-docs", response_model=ResponseLoginSchema, status_code=status.HTTP_200_OK)
 async def login_form_docs(form_data: OAuth2PasswordRequestForm = Depends(), auth_service: AuthService = Depends(get_auth_service)) -> ResponseLoginSchema:
