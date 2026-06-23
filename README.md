@@ -188,7 +188,7 @@ Password hashing is handled by `bcrypt` via `passlib`. Token generation and veri
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/nicolasandreos/pizzaria-api-python.git
 cd pizzaria-api
 
 # Start the API and MySQL database
@@ -308,7 +308,6 @@ This repository enforces a quality-gated workflow on the `main` branch:
 
 - **Direct pushes to `main` are blocked** — all changes must go through a Pull Request
 - **All CI checks must pass** before a PR can be merged (pytest is a required check)
-- **At least one approved review** is required before merging
 - This guarantees that no untested or unreviewed code ever reaches production
 
 ---
@@ -352,6 +351,3 @@ uvicorn main:app --reload
 
 ---
 
-## License
-
-This project is for portfolio and demonstration purposes.
