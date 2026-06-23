@@ -187,11 +187,8 @@ Password hashing is handled by `bcrypt` via `passlib`. Token generation and veri
 **Prerequisites:** Docker and Docker Compose installed.
 
 ```bash
-# Clone the repository
 git clone https://github.com/nicolasandreos/pizzaria-api-python.git
 cd pizzaria-api
-
-# Start the API and MySQL database
 docker compose up --build
 ```
 
