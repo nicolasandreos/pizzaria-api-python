@@ -10,7 +10,8 @@ services:
       - 8000:8000
 
     environment:
-      RUN_DATABASE_MIGRATIONS: "True"
+      ENVIRONMENT: development
+      RUN_DATABASE_MIGRATIONS: true
 
     volumes:
       - .:/app
