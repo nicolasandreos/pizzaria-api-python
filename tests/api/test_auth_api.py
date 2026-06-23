@@ -47,10 +47,17 @@ def test_refresh_access_token_should_return_401_when_invalid_token():
 
     assert response.status_code == 401
 
-def refresh_access_token_should_return_access_token():
+def test_refresh_access_token_should_return_access_token():
     user_id = 1
     refresh_token = JwtService.create_refresh_token(user_id)
     response = client.post("/auth/refresh-access-token", headers={"Authorization": f"Bearer {refresh_token}"})
 
     assert response.json()["access_token"] is not None
     assert response.json()["token_type"] == "Bearer"
+
+def test_get_user_should_return_200_when_valid_token():
+    user_id = 1
+    access_token = JwtService.create_access_token(user_id)
+    response = client.get("/auth/me", headers={"Authorization": f"Bearer {access_token}"})
+
+    assert response.status_code == 200
