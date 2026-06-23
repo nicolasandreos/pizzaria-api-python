@@ -188,7 +188,7 @@ Password hashing is handled by `bcrypt` via `passlib`. Token generation and veri
 
 ```bash
 git clone https://github.com/nicolasandreos/pizzaria-api-python.git
-cd pizzaria-api
+cd pizzaria-api-python
 docker compose up --build
 ```
 
