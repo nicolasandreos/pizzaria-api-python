@@ -15,6 +15,13 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: sqlite:///./test.db
+      JWT_TOKEN: test
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_MINUTES: 10080
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
